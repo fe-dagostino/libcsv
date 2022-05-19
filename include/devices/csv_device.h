@@ -32,7 +32,7 @@ inline namespace LIB_VERSION {
 class csv_device;
 
 enum class csv_result {
-  _ok                  = 0x0000,
+  _ok              = 0x0000,
 
   _closed          = 0x1002,
   _no_devs         = 0x0003,
@@ -49,7 +49,7 @@ enum class csv_result {
 
   _not_implemented,
 
-  _wrong_protocol      = 0x2001,
+  _wrong_protocol  = 0x2001,
   _missing_soh,
   _wrong_soh,
   _wrong_crc,

@@ -127,6 +127,11 @@ csv_result csv_dev_file::send(const std::byte* pBuffer, csv_uint_t iBufferLen)
 
   if ( _retVal != csv_result::_ok )
   {
+    if ( m_ptrEvents != nullptr )
+    {
+      m_ptrEvents->onError( this, _retVal );
+    }
+
     //Close socket and release resources
     close();
   }
@@ -136,10 +141,10 @@ csv_result csv_dev_file::send(const std::byte* pBuffer, csv_uint_t iBufferLen)
 
 csv_result csv_dev_file::recv(std::byte* pBuffer, csv_uint_t& nBufferLen)
 {
-  if ( open() != csv_result::_ok )
-    return csv_result::_rx_error;
+  csv_result  _retVal = open();
+  if ( _retVal != csv_result::_ok )
+    return _retVal;
 
-  csv_result _retVal        = csv_result::_ok;
   csv_uint_t _nWishedBytes  = nBufferLen;
   csv_uint_t _nBufCursor    = 0;
 
@@ -178,10 +183,15 @@ csv_result csv_dev_file::recv(std::byte* pBuffer, csv_uint_t& nBufferLen)
       ( _retVal != csv_result::_rx_timedout )
      )
   {
+    if ( m_ptrEvents != nullptr )
+    {
+      m_ptrEvents->onError( this, _retVal );
+    }    
+
     //Close and release resources
     close();
   }
-
+  
   return _retVal;
 }
 
