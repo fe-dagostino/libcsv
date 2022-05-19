@@ -118,14 +118,19 @@ public:
       m_nLength(0)
   { }
 
-  /***/
+  /**
+   * @brief csv_data copy constructor do not copy exactly the origial object, 
+   *        instead it allocate only required memory to 
+   *          
+   * 
+   */
   constexpr csv_data( const csv_data& data )
     : csv_data()
   {
     if ( data.empty() == false )
     {
       resize( data.length()+1 );
-      memcpy( data(), data.data(), data.size() );
+      memcpy( this->data(), data.data(), data.size() );
       m_nLength  = data.length();
     }
   }
@@ -133,6 +138,7 @@ public:
   /***/
   constexpr csv_data( csv_data&& data ) 
   {
+    // Use move assign operator in order
     *this = std::move(data);
   }
 
@@ -219,6 +225,12 @@ public:
   constexpr void reserve( size_type length ) noexcept
   { resize(length); }
 
+  /**
+   * @brief Set the length to 0 items, however the capacity for the buffer will be
+   *        the same and no memory will be deallocated.
+   *        If you want to release also all internal buffer then call release() 
+   *        method instead.
+   */
   constexpr void clear() noexcept
   { 
     memset( m_pData, '\0', this->capacity() );
@@ -309,14 +321,19 @@ public:
     return *this; 
   }
    
-private:
-  /***/
+  /**
+   * @brief Release all internal memory and reset max_size() and length() 
+   *        to ZERO.
+   */
   constexpr void  release() noexcept
   {
-    free (m_pData);
-    m_pData     = nullptr;
-    m_nMaxSize  = 0;
-    m_nLength   = 0;
+    if ( m_pData != nullptr )
+    {
+      free (m_pData);
+      m_pData     = nullptr;
+      m_nMaxSize  = 0;
+      m_nLength   = 0;
+    }
   }
 
 private:
