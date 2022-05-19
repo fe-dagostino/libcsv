@@ -135,15 +135,15 @@ public:
    */
   virtual csv_result is_valid() const = 0;
 
+private:
+  const std::string                      m_sDeviceName;
+
 protected:
   std::unique_ptr<csv_device_options>    m_ptrOptions;
   std::unique_ptr<csv_device_events>     m_ptrEvents;
 
   /* stats */
   csv_dev_stats                          m_devStats;
-
-private:
-  const std::string                      m_sDeviceName;
 
 };
 
