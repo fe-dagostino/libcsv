@@ -73,8 +73,8 @@ set(  LIB_INCLUDE
 )
 
 set(  LIB_SRC
-  ./src/csv_device.cpp
-  ./src/csv_dev_file.cpp
+  ./src/devices/csv_device.cpp
+  ./src/devices/csv_dev_file.cpp
   ./src/csv_parser.cpp
   ./src/csv_reader.cpp
 )
