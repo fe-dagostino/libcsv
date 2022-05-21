@@ -47,7 +47,7 @@ enum class csv_result {
   _rx_timedout     = 0x000B,
   _conn_timeout    = 0x000C,
 
-  _not_implemented,
+  _not_implemented = 0x1001,
 
   _wrong_protocol  = 0x2001,
   _missing_soh,
@@ -144,7 +144,6 @@ protected:
 
   /* stats */
   csv_dev_stats                          m_devStats;
-
 };
 
 } //inline namespace
