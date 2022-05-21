@@ -143,8 +143,6 @@ public:
   /**
    * @brief csv_data copy constructor do not copy exactly the origial object, 
    *        instead it allocate only required memory to 
-   *          
-   * 
    */
   constexpr csv_data( const csv_data& data )
     : csv_data()
@@ -154,6 +152,17 @@ public:
       resize( data.length()+1 );
       memcpy( this->data(), data.data(), data.size() );
       m_nLength  = data.length();
+    }
+  }
+
+  constexpr csv_data( const_pointer buffer, size_type length )
+    : csv_data()
+  {
+    if ((buffer != nullptr) && (length > 0))
+    {
+      resize( length+1 );
+      memcpy( this->data(), buffer, length*data_type_size );
+      m_nLength  = length;
     }
   }
 
