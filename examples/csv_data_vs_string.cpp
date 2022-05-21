@@ -35,9 +35,7 @@ int main(/* int argc, char* argv[]*/ )
 
   auto ts_data = chrono::steady_clock::now();
   {
-    csv_data<char,size_t,to_bytes<512>::Bytes> test_tmp;
-    test_tmp.reserve(4048);
-    csv_data<char,size_t,to_bytes<512>::Bytes> test( std::move(test_tmp) );
+    csv_data<char,size_t,to_bytes<512>::Bytes> test;
 
     for ( size_t _counter = 0; _counter < _nRepeat; ++_counter )
     {
