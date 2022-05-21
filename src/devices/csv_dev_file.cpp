@@ -178,7 +178,13 @@ csv_result csv_dev_file::recv(std::byte* pBuffer, csv_uint_t& nBufferLen)
   // In such case pBuffer contain only partial data and nBufferLen must be updated accordigly.
   nBufferLen -= _nWishedBytes;
 
-  if (
+  if ( (_retVal == csv_result::_eof) && (nBufferLen > 0) )
+  {
+    // In this condition device return last read buytes and even then number
+    // bytes is less than requested. Return value will be _ok and next call will be _eof
+    _retVal = csv_result::_ok;
+  }
+  else if (
       ( _retVal != csv_result::_ok          ) &&
       ( _retVal != csv_result::_rx_timedout )
      )
