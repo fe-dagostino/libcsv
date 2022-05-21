@@ -27,18 +27,20 @@
 namespace csv {
 inline namespace LIB_VERSION {
 
-csv_parser::csv_parser( std::unique_ptr<csv_device>&& ptrDevice )
+csv_parser::csv_parser( std::unique_ptr<csv_device>&& ptrDevice, std::unique_ptr<csv_events>&& ptrEvents )
   : m_eState (Status::eStart),
-    m_cSeparator(','), m_cEoL('\n'),
+    m_cDelimeter(','), m_cQuote('\"'), m_cEoL('\n'),
     m_sWhitespaces("\a\b\t\v\f\r\n"),
     m_bSkipWhitespaces(true),
+    m_bTrimAll(true),
     m_ptrDevice( std::move(ptrDevice) ),
+    m_ptrEvents( std::move(ptrEvents) ),
     m_recvCachedBytes( 0 ),
     m_recvCacheCursor( 0 )
 {
 }
 
-bool  csv_parser::set_header( csv_row&& header )
+bool  csv_parser::set_header( csv_row&& header ) noexcept
 { 
   bool bRetVal = false;
   if ( m_vHeader.empty() )
@@ -50,10 +52,10 @@ bool  csv_parser::set_header( csv_row&& header )
   return bRetVal;
 }
 
-csv_result csv_parser::parse_row( csv_row& row ) const
+csv_result csv_parser::parse_row( csv_row& row ) const noexcept
 {
   char          _ch{'\0'};
-  csv_result    _res = csv_result::_ok;
+  csv_result    _retVal = csv_result::_ok;
 
   bool          _bEoL      = false;
   bool          _bAddField = false;
@@ -66,8 +68,9 @@ csv_result csv_parser::parse_row( csv_row& row ) const
     if ( m_recvCacheCursor == m_recvCachedBytes )
     {
       m_recvCachedBytes = m_recvCache.size();
-      _res = m_ptrDevice->recv( m_recvCache.data(), m_recvCachedBytes );
-      if ( _res != csv_result::_ok ) {
+      csv_result _result = m_ptrDevice->recv( m_recvCache.data(), m_recvCachedBytes );
+      if ( (_result != csv_result::_ok) && (m_recvCachedBytes==0) ) {
+        _retVal = _result;
         break;
       }
       m_recvCacheCursor = 0; 
@@ -100,10 +103,24 @@ csv_result csv_parser::parse_row( csv_row& row ) const
 
     if ( _bAddField == true )
     {
+      const char* pFirst = nullptr;
+      const char* pLast  = nullptr;
+      size_t      length = m_sData.length();
+
+      if (m_sData.empty()==false)
+      {
+        pFirst = m_sData.data();
+        pLast  = &pFirst[m_sData.length()-1];
+
+        trim_all( pFirst, pLast, length );
+       
+        _bQuoted = is_quoted ( pFirst, pLast, length );
+      }
+
       // A temporary object csv_field will be instantiated with
       // m_sData that is subject to copy constructor and then
       // temporary object will be moved inside the container.
-      row.push_back( csv_field( m_sData, _bQuoted ) );
+      row.push_back( csv_field( csv_data<char,size_t>(pFirst,length), _bQuoted ) );
       
       m_sData.clear();
       _bQuoted = _bAddField = false;
@@ -112,18 +129,65 @@ csv_result csv_parser::parse_row( csv_row& row ) const
   } while (_bEoL==false);
 
   /////////////////////////////////////////////////////////
-  // Intended to manage last row in the data source where 
-  // line terminator (EOL) or (CR) could be missed.
-  if ( !m_sData.empty() )
+  // Intended to manage last data source row where line
+  // terminator (EOL) could be missed then we just got EoF.
+  if ( m_sData.empty() == false )
   {
-    row.push_back( csv::csv_field( m_sData, _bQuoted ) );
+    const char* pFirst = nullptr;
+    const char* pLast  = nullptr;
+    size_t      length = m_sData.length();
+
+    if (m_sData.empty()==false)
+    {
+      pFirst = m_sData.data();
+      pLast  = &pFirst[m_sData.length()-1];
+
+      trim_all( pFirst, pLast, length );
+      
+      _bQuoted = is_quoted ( pFirst, pLast, length );
+    }
+
+    // A temporary object csv_field will be instantiated with
+    // m_sData that is subject to copy constructor and then
+    // temporary object will be moved inside the container.
+    row.push_back( csv_field( csv_data<char,size_t>(pFirst,length), _bQuoted ) );    
+    
     m_sData.clear();  
   }
 
-  return _res;
+  return _retVal;
 }
 
-bool  csv_parser::parse( csv_row& row ) const
+void csv_parser::trim_all( const char* & pFirst, const char* & pLast, size_t& length ) const noexcept
+{
+  if ( trim_all() == true )
+  {
+    while ( *pFirst == ' ' ) { ++pFirst; --length; }
+    
+    if ( length > 0 ) {
+      while ( *pLast  == ' ' ) { --pLast;  --length; } 
+    } else {
+      pLast = pFirst;
+    }
+  }
+}
+
+bool csv_parser::is_quoted( const char* & pFirst, const char* & pLast, size_t& length ) const noexcept
+{
+  // The first condition consider when we have a single character that match with get_quote()
+  // in fact in such case content of the field shall be considered not quoted.
+  if ( (pFirst != pLast) && (*pFirst == get_quote()) && (*pLast == get_quote()) )
+  {
+    pFirst++; pLast--;
+    length -=2;
+    return true;
+  }
+
+  return false;
+}
+
+
+csv_result  csv_parser::parse( csv_row& row ) const noexcept
 {
   csv_result    _res   = csv_result::_ok;
   bool          _bExit = false;
@@ -133,26 +197,44 @@ bool  csv_parser::parse( csv_row& row ) const
     {
       case Status::eStart: 
       {
+        if (m_ptrEvents != nullptr) {
+          m_ptrEvents->onBegin();
+        }
+
         if ( get_header().empty() )
           m_eState = Status::eReadHeader;
         else
-          m_eState = Status::eReadLine;
+          m_eState = Status::eReadRows;
       }; break;
     
       case Status::eReadHeader: 
       {
         _res = parse_row( m_vHeader );
-        if ( _res == csv_result::_ok ) 
-          m_eState = Status::eReadLine;
-        else if ( _res == csv_result::_eof )
+        if ( _res == csv_result::_ok ){
+          // Invoke event interface  
+          if (m_ptrEvents != nullptr) {
+            m_ptrEvents->onHeaders( m_vHeader );
+          }
+
+          m_eState = Status::eReadRows;
+        }
+        else if ( _res == csv_result::_eof ){
           m_eState = Status::eEnd;
+        }
+
       }; break;
 
-      case Status::eReadLine: 
+      case Status::eReadRows: 
       {
         _res = parse_row( row );
-        if ( _res == csv_result::_ok  )  
+        if ( _res == csv_result::_ok  ){
+          // Invoke event interface  
+          if (m_ptrEvents != nullptr) {
+            m_ptrEvents->onRow( row );
+          }
+
           _bExit = true;
+        }
         else if ( _res == csv_result::_eof )
           m_eState = Status::eEnd;
       }; break;
@@ -161,6 +243,11 @@ bool  csv_parser::parse( csv_row& row ) const
       {
         _res = m_ptrDevice->close();
         _bExit = true;
+
+        if (m_ptrEvents != nullptr) {
+
+          m_ptrEvents->onEnd();
+        }        
       }; break;
 
       default:
@@ -170,7 +257,7 @@ bool  csv_parser::parse( csv_row& row ) const
     /* code */
   } while ( ( _res == csv_result::_ok ) && (_bExit == false) );
   
-  return (_res == csv_result::_ok);
+  return _res;
 }
 
 

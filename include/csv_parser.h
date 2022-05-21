@@ -26,6 +26,7 @@
 
 #include "csv_field.h"
 #include "csv_device.h"
+#include "csv_events.h"
 #include "csv_data.h"
 
 #include <memory>
@@ -42,34 +43,48 @@ class csv_parser
   enum class Status : uint8_t { 
     eStart = 0, 
     eReadHeader = 1,
-    eReadLine = 2,
+    eReadRows = 2,
     eEnd = 3 
   };
 
 protected:
   /***/
-  csv_parser( std::unique_ptr<csv_device>&& ptrDevice );
+  csv_parser( std::unique_ptr<csv_device>&& ptrDevice, std::unique_ptr<csv_events>&& ptrEvents );
 
 public:
   /**
-   * @brief Set field separator.
+   * @brief Set field delimeter.
    *        Default value is comma ','.
    */
-  constexpr void set_delimeter( char ch )
-  { m_cSeparator = ch; }
+  constexpr inline void set_delimeter( char ch ) noexcept
+  { m_cDelimeter = ch; }
   /**
-   * @brief Get the separator. 
+   * @brief Get field delimeter. 
    * 
    * @return the character used between fields.
    */
-  constexpr char get_delimeter() const
-  { return m_cSeparator; }
+  constexpr inline char get_delimeter() const noexcept
+  { return m_cDelimeter; }
+
+  /**
+   * @brief Set quote delimeter.
+   *        Default value is '\"'.
+   */
+  constexpr inline void set_quote( char ch ) noexcept
+  { m_cQuote = ch; }
+  /**
+   * @brief Get quote delimeter. 
+   * 
+   * @return the character used between fields.
+   */
+  constexpr inline char get_quote() const noexcept
+  { return m_cQuote; }
 
   /**
    * @brief Set End of Line marker.
    *        Default value is '\n'.
    */
-  constexpr void set_eol( char ch )
+  constexpr inline void set_eol( char ch ) noexcept
   { m_cEoL = ch; }
 
   /**
@@ -77,23 +92,38 @@ public:
    * 
    * @return the character used to mark the end of current line.
    */
-  constexpr char get_eol() const
+  constexpr inline char get_eol() const noexcept
   { return m_cEoL; }
 
-  /***/
-  inline    void               set_whitespaces( const std::string& whitespaces )
+  /**
+   * @brief Set the whitespaces to be avoided. Default values are "\a\b\t\v\f\r\n".
+   *        Note: if the list include also ' ' then all spaces will be removed
+   *              and resulting string will without any space so " abc def " will
+   *              be "abcdef", instead    
+   * 
+   * @param whitespaces 
+   */
+  inline    void               set_whitespaces( const std::string& whitespaces ) noexcept
   { m_sWhitespaces = whitespaces; }
   /***/
-  constexpr const std::string& get_whitespaces( ) const
+  constexpr const std::string& get_whitespaces( ) const noexcept
   { return m_sWhitespaces; }
 
   /***/
-  constexpr    void            skip_whitespaces( bool bSkip )
+  constexpr void               skip_whitespaces( bool bSkip ) noexcept
   { m_bSkipWhitespaces = bSkip; }
   /***/
-  constexpr bool               skip_whitespaces() const
+  constexpr bool               skip_whitespaces() const noexcept
   { return m_bSkipWhitespaces; }
 
+  /***/
+  constexpr void               trim_all( bool trim_all ) noexcept
+  { m_bTrimAll = trim_all; }
+  /***/
+  constexpr bool               trim_all() const noexcept
+  { return m_bTrimAll;   }
+    
+  
   /**
    * @brief Set the header structure. Each line should match with number of field specified in the header.
    *        Note: in case no header will be specified before a call to parse() method then the first line 
@@ -105,33 +135,50 @@ public:
    * @return true  if the header is not already set
    * @return false if the header is already valorized, in such case parameter will be ignore.
    */
-  inline bool                  set_header( csv_row&& header );
+  inline bool                  set_header( csv_row&& header ) noexcept;
   /**
    * @brief Get the header. 
    * 
    * @return a const reference to internal header.
    */
-  constexpr const csv_row&     get_header() const
+  constexpr const csv_row&     get_header() const noexcept
   { return m_vHeader; }
 
 
 
 protected:
   /***/
-  bool        parse( csv_row& row ) const;
+  csv_result  parse( csv_row& row ) const noexcept;
 
 private:
   /***/
-  csv_result  parse_row( csv_row& row ) const;
+  csv_result  parse_row( csv_row& row ) const noexcept;
+  /**
+   * @brief 
+   * 
+   * @param pFirst pointer to the first element. 
+   *               Pointer will be updated the the first valid element.
+   * @param pLast  pointer to the last element
+   *               Pointer will be updated the the first valid element.
+   * @param length current length
+   * @return size_t new length of the string once all spaces are removed. 
+   *         If the length returned is the same of current lenght no trim have beed done.
+   */
+  void        trim_all ( const char* & pFirst, const char* & pLast, size_t& length ) const noexcept;
+  /***/
+  bool        is_quoted( const char* & pFirst, const char* & pLast, size_t& length ) const noexcept;
 
 private:
   mutable Status                                     m_eState;
-  char                                               m_cSeparator;
+  char                                               m_cDelimeter;
+  char                                               m_cQuote;
   char                                               m_cEoL;
   std::string                                        m_sWhitespaces;
   bool                                               m_bSkipWhitespaces;
+  bool                                               m_bTrimAll;
   mutable csv_row                                    m_vHeader;
   std::unique_ptr<csv_device>                        m_ptrDevice;
+  std::unique_ptr<csv_events>                        m_ptrEvents;
 
   mutable std::array<std::byte,to_bytes<32>::KBytes> m_recvCache;
   mutable std::size_t                                m_recvCachedBytes;
