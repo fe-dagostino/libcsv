@@ -27,8 +27,8 @@ namespace csv {
 inline namespace LIB_VERSION {
 
 
-csv_reader::csv_reader( std::unique_ptr<csv_device> ptrDevice )
-  : csv_parser( std::move(ptrDevice) )
+csv_reader::csv_reader( std::unique_ptr<csv_device>&& ptrDevice, std::unique_ptr<csv_events>&& ptrEvents )
+  : csv_parser( std::move(ptrDevice), std::move(ptrEvents) )
 {}
 
 bool csv_reader::open()
@@ -38,7 +38,9 @@ bool csv_reader::open()
 
 bool csv_reader::read( csv_row& row ) const
 {
-  return parse( row );
+  csv_result _res = parse( row );
+
+  return (_res == csv_result::_ok);
 }
 
 bool csv_reader::close()
