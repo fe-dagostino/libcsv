@@ -21,7 +21,6 @@ void print_duration( tp ts, tp te )
   << (duration.count() * 1000000000) << "ns   " << endl;
 }
 
-
 int main( int argc, char* argv[] )
 {
   if (argc < 2 )
@@ -45,9 +44,10 @@ int main( int argc, char* argv[] )
   unique_ptr<csv_dev_file>         dev = std::make_unique<csv_dev_file>( std::move(opt),nullptr);
 
   std::vector<csv_row*>  rows;
-  csv_reader reader( std::move(dev) );
+  csv_reader reader( std::move(dev), nullptr );
 
-  reader.skip_whitespaces(false);
+  reader.skip_whitespaces(true);
+  reader.set_quote('\"');
   
   csv_row*    row = new csv_row();
 
@@ -67,6 +67,6 @@ int main( int argc, char* argv[] )
     cout <<  field.data().c_str() << ",";
   }
   cout << endl;
-
+  
   return 0;
 }
