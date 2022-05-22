@@ -37,7 +37,7 @@ typedef uint64_t    csv_uint_t;
 
 template < csv_uint_t qnt = 1 >
 struct to_bytes {
-  enum { 
+  enum : uint64_t { 
     Bytes  =    1 * qnt,
     KBytes = 1024 * qnt,
     MBytes = 1024 * 1024 * qnt,
