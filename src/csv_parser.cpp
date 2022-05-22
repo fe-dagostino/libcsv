@@ -163,7 +163,7 @@ void csv_parser::trim_all( const char* & pFirst, const char* & pLast, size_t& le
   if ( trim_all() == true )
   {
     while ( *pFirst == ' ' ) { ++pFirst; --length; }
-    
+
     if ( length > 0 ) {
       while ( *pLast  == ' ' ) { --pLast;  --length; } 
     } else {
@@ -179,7 +179,7 @@ bool csv_parser::is_quoted( const char* & pFirst, const char* & pLast, size_t& l
   if ( (pFirst != pLast) && (*pFirst == get_quote()) && (*pLast == get_quote()) )
   {
     pFirst++; pLast--;
-    length -=2;
+    length -= 2;
     return true;
   }
 
