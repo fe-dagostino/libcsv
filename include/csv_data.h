@@ -48,12 +48,10 @@ public:
   {
     public:
       typedef std::forward_iterator_tag iterator_category;
-
+      
+      /***/
       constexpr iterator(pointer ptr) 
       : m_ptr(ptr)
-      { }
-
-      constexpr ~iterator() 
       { }
 
       // Prefix ++
@@ -94,10 +92,9 @@ public:
     public:
       typedef std::forward_iterator_tag iterator_category;
 
+      /***/
       constexpr const_iterator(pointer ptr) 
       : m_ptr(ptr)
-      { }
-      constexpr ~const_iterator() 
       { }
 
       // Prefix ++
