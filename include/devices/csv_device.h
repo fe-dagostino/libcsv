@@ -34,6 +34,8 @@ class csv_device;
 enum class csv_result {
   _ok              = 0x0000,
 
+  _not_implemented = 0x1001,
+
   _closed          = 0x1002,
   _no_devs         = 0x0003,
   _access          = 0x0004,
@@ -46,8 +48,7 @@ enum class csv_result {
   _tx_timedout     = 0x000A,
   _rx_timedout     = 0x000B,
   _conn_timeout    = 0x000C,
-
-  _not_implemented = 0x1001,
+  _bom_mismatch    = 0x000D,
 
   _wrong_protocol  = 0x2001,
   _missing_soh,
