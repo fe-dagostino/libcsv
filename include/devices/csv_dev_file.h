@@ -40,13 +40,33 @@ public:
                                 // treated as a new empty file.
   };
 
+  /***/
+  enum class filetype : uint8_t {
+    PLAIN_TEXT  = 0x00,
+    UTF_8       = 0x01,
+    UTF_16BE    = 0x02,
+    UTF_16LE    = 0x03,
+    UTF_32BE    = 0x04,
+    UTF_32LE    = 0x05,
+    UTF_7       = 0x06,
+    UTF_1       = 0x07,
+    UTF_EBCDIC  = 0x08,
+    SCSU        = 0x09,
+    BOCU_1      = 0x0A,
+    GB_18030    = 0x0B,
+
+    MAX_VALUE,
+
+    AUTO_DETECT = 0xFF
+  };
+
   /**
    * File Device options.
    *
    * @param sFilename    filename.
    */
-  explicit csv_dev_file_options( std::string sFilename, openmode modeFlags, csv_uint_t buf_size = to_bytes<1>::MBytes )
-  : csv_device_options(), m_sFilename(sFilename), m_modeFlags(modeFlags),
+  explicit csv_dev_file_options( std::string sFilename, openmode mode, csv_uint_t buf_size = to_bytes<1>::MBytes, filetype bom = filetype::PLAIN_TEXT )
+  : csv_device_options(), m_sFilename(sFilename), m_openMode(mode), m_bom(bom),
     m_bufSize( buf_size )
   {
   }
@@ -56,21 +76,26 @@ public:
   {}
 
   /***/
-  constexpr const std::string&   get_filename() const
+  constexpr const std::string&   get_filename() const noexcept
   { return m_sFilename; }
 
   /***/
-  inline openmode                get_mode() const
-  { return m_modeFlags; }
+  constexpr openmode             get_mode() const noexcept
+  { return m_openMode; }
 
   /***/
-  inline csv_uint_t              get_bufsize() const
+  constexpr csv_uint_t           get_bufsize() const noexcept
   { return m_bufSize; }
+
+  /***/
+  constexpr filetype             get_bom() const noexcept
+  { return m_bom; }
 
 private:
   std::string       m_sFilename;
-  openmode          m_modeFlags;
-  const csv_uint_t   m_bufSize;
+  const openmode    m_openMode;
+  const filetype    m_bom;
+  const csv_uint_t  m_bufSize;
 };
 
 class csv_dev_file : public csv_device
@@ -109,13 +134,17 @@ public:
   /**
    * \return _ok                Device is valid.
    */
-  virtual csv_result is_valid() const override;
+  virtual csv_result is_valid() const noexcept override;
 
 private:
   /***/
-  csv_result       refresh_cache();
+  csv_result                      refresh_cache() noexcept;
   /***/
-  void             release();
+  constexpr void                  release() noexcept;
+  /***/
+  csv_dev_file_options::filetype  detect_and_skip_bom() noexcept;
+  /***/
+  void                            write_bom() noexcept;
 
 private:
   FILE*        m_pFile;

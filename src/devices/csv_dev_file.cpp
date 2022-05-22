@@ -31,6 +31,35 @@ inline namespace LIB_VERSION {
 
 #define DeviceOption(p)   (static_cast<const csv_dev_file_options *>(p.get()))
 
+
+/////////////////
+// Byte Order Marks by encoding
+// https://en.wikipedia.org/wiki/Byte_order_mark
+//
+// In the following table the byte[0] specify BOM length.
+// 0xAA value is used as undefined value.
+static std::uint8_t __BOM__[][5] = {
+
+  { 0x00, 0xAA, 0xAA, 0xAA, 0xAA },
+  { 0x03, 0xEF, 0xBB, 0xBF, 0xAA },  // UTF-8
+
+  { 0x02, 0xFE, 0xFF, 0xAA, 0xAA },  // UTF-16 BE
+  { 0x02, 0xFF, 0xFE, 0xAA, 0xAA },  // UTF-16 LE 
+
+  { 0x04, 0x00, 0x00, 0xFE, 0xFF },  // UTF-32 BE 
+  { 0x04, 0xFF, 0xFE, 0x00, 0x00 },  // UTF-32 LE 
+
+  { 0x03, 0x2B, 0x2F, 0x76, 0xAA },  // UTF-7  
+  { 0x03, 0xF7, 0x64, 0x4c, 0xAA },  // UTF-1  
+
+  { 0x04, 0xDD, 0x73, 0x66, 0x73 },  // UTF-EBCDIC
+
+  { 0x03, 0x0E, 0xFE, 0xFF, 0xAA },  // SCSU
+  { 0x03, 0xFB, 0xEE, 0x28, 0xAA },  // BOCU-1
+
+  { 0x04, 0x84, 0x31, 0x95, 0x33 }   // GB-18030
+};
+
 csv_dev_file::csv_dev_file( std::unique_ptr<csv_dev_file_options> ptrDeviceOptions, std::unique_ptr<csv_device_events> ptrEvents )
     : csv_device( "csv_dev_file", std::move(ptrDeviceOptions), std::move(ptrEvents) ),
       m_pFile(nullptr), m_pRxBuffer(nullptr), m_nCacheSize(0), m_nCursor(0)
@@ -41,6 +70,56 @@ csv_dev_file::csv_dev_file( std::unique_ptr<csv_dev_file_options> ptrDeviceOptio
 csv_dev_file::~csv_dev_file()
 {
   release();
+}
+
+csv_dev_file_options::filetype  csv_dev_file::detect_and_skip_bom() noexcept
+{
+  csv_dev_file_options::filetype _retVal = csv_dev_file_options::filetype::PLAIN_TEXT;
+  std::byte                      _rxBOM[4];
+  size_t                         _bom_size = fread( _rxBOM, sizeof(std::byte), 4, m_pFile );
+
+  for ( uint8_t ndx = 1; ndx < static_cast<uint8_t>(csv_dev_file_options::filetype::MAX_VALUE); ++ndx )
+  { 
+    if ( __BOM__[ndx][0] <= _bom_size )
+      if (memcmp ( _rxBOM, &__BOM__[ndx][1], __BOM__[ndx][0] ) == 0)
+      { 
+        _retVal = static_cast<csv_dev_file_options::filetype>(ndx); 
+        fseeko64( m_pFile, __BOM__[ndx][0], SEEK_SET );
+        break;
+      }
+  }
+
+  if ( _retVal == csv_dev_file_options::filetype::PLAIN_TEXT )
+    fseeko64( m_pFile, 0, SEEK_SET );
+
+  return _retVal;
+}
+
+void  csv_dev_file::write_bom() noexcept
+{
+  switch (DeviceOption(m_ptrOptions)->get_bom())
+  {
+
+    case csv_dev_file_options::filetype::UTF_8:
+    case csv_dev_file_options::filetype::UTF_16BE:
+    case csv_dev_file_options::filetype::UTF_16LE:
+    case csv_dev_file_options::filetype::UTF_32BE:
+    case csv_dev_file_options::filetype::UTF_32LE:
+    case csv_dev_file_options::filetype::UTF_7:
+    case csv_dev_file_options::filetype::UTF_1:
+    case csv_dev_file_options::filetype::UTF_EBCDIC:
+    case csv_dev_file_options::filetype::SCSU:
+    case csv_dev_file_options::filetype::BOCU_1:
+    case csv_dev_file_options::filetype::GB_18030:
+    {
+      uint8_t ndx = static_cast<uint8_t>(DeviceOption(m_ptrOptions)->get_bom());
+      send( reinterpret_cast<const std::byte*>(&__BOM__[ndx][1]), __BOM__[ndx][0] );
+    }; break;
+  
+    default:
+    break;
+  }
+  
 }
 
 csv_result csv_dev_file::open()
@@ -97,6 +176,31 @@ csv_result csv_dev_file::open()
   if ( m_ptrEvents != nullptr )
   {
     m_ptrEvents->onOpened( this );
+  }
+
+  ///////////////////////////////
+  // Detect or Write BOM
+  switch ( DeviceOption(m_ptrOptions)->get_mode() )
+  {
+    case csv_dev_file_options::openmode::write:
+    {
+
+    }; break;
+  
+    default: // default csv_dev_file_options::openmode::read
+    {
+      auto _detected_bom = detect_and_skip_bom();
+      if (
+          ( DeviceOption(m_ptrOptions)->get_bom() != _detected_bom ) &&
+          ( DeviceOption(m_ptrOptions)->get_bom() != csv_dev_file_options::filetype::PLAIN_TEXT )
+        )
+      {
+        if ( m_ptrEvents != nullptr )
+        {
+          m_ptrEvents->onError( this, csv_result::_bom_mismatch );
+        }
+      }      
+    }; break;
   }
 
   m_devStats.rx     = 0;
@@ -201,7 +305,7 @@ csv_result csv_dev_file::recv(std::byte* pBuffer, csv_uint_t& nBufferLen)
   return _retVal;
 }
 
-csv_result csv_dev_file::refresh_cache()
+csv_result csv_dev_file::refresh_cache() noexcept
 {
   m_nCacheSize = fread( m_pRxBuffer, 1, DeviceOption(m_ptrOptions)->get_bufsize(), m_pFile );
   m_nCursor    = 0;
@@ -248,7 +352,7 @@ csv_result csv_dev_file::flush()
   return csv_result::_ok;
 }
 
-csv_result csv_dev_file::is_valid() const
+csv_result csv_dev_file::is_valid() const noexcept
 {
   if ( m_pFile == nullptr )
     return csv_result::_closed;
@@ -256,7 +360,7 @@ csv_result csv_dev_file::is_valid() const
   return csv_result::_ok;
 }
 
-void csv_dev_file::release()
+constexpr void csv_dev_file::release() noexcept
 {
   if( m_pFile != nullptr ) 
   {
