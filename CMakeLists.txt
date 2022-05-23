@@ -51,22 +51,23 @@ set(  LIB_BINARY_DIR
       ${CMAKE_CURRENT_BINARY_DIR}
    )
 
-set(  EXT_LIBRARIES
-      m
-      pthread
-)
-
 IF( CMAKE_BUILD_TYPE STREQUAL "Debug" )
   add_definitions(
                   -ggdb3
   )
 ENDIF()
 
-add_definitions(
-                  -Wall
-                  -Wextra
-                  -pedantic
-)
+if(MSVC)
+  # warning level 4 and all warnings as errors
+  add_compile_options(-D_CRT_SECURE_NO_WARNINGS /W4 /WX)
+else()
+  # lots of warning
+  add_compile_options(-Wall -Wextra -pedantic)
+  set(  EXT_LIBRARIES
+      m
+      pthread
+  )
+endif()
 
 set(  LIB_INCLUDE
 
