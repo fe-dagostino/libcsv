@@ -174,6 +174,14 @@ public:
   { release(); }
 
   /**
+   * @brief Retrieve length in bytes for one single data_t.
+   * 
+   * @return sizeof(data_t) 
+   */
+  constexpr size_type  type_size() const noexcept
+  { return data_type_size; }
+
+  /**
    * @brief  Retrieve the size in bytes required by current length.
    *         Note: if sizeof(data_t) == 1 then size() and length() 
    *               will have the same value.
