@@ -34,7 +34,7 @@ class csv_dev_file_options : public csv_device_options
 {
 public:
   enum class openmode : char {
-    read = 'r',                 // read: Open file for input operations. The file must exist. 
+    read  = 'r',                // read: Open file for input operations. The file must exist. 
     write = 'w'                 // write: Create an empty file for output operations. If a file with the 
                                 // same name already exists, its contents are discarded and the file is 
                                 // treated as a new empty file.
@@ -68,8 +68,7 @@ public:
   explicit csv_dev_file_options( std::string sFilename, openmode mode, csv_uint_t buf_size = to_bytes<1>::MBytes, filetype bom = filetype::PLAIN_TEXT )
   : csv_device_options(), m_sFilename(sFilename), m_openMode(mode), m_bom(bom),
     m_bufSize( buf_size )
-  {
-  }
+  {}
 
   /***/
   virtual ~csv_dev_file_options()
