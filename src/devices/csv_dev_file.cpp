@@ -132,12 +132,14 @@ csv_result csv_dev_file::open()
   m_pFile        = fopen64( DeviceOption(m_ptrOptions)->get_filename().c_str(), 
                           ((DeviceOption(m_ptrOptions)->get_mode()==csv_dev_file_options::openmode::write)?"w":"r") );
   // Note that using an raw pointer instead of a smart pointer increase performances for the cached methods.
-  m_pRxBuffer    = new(std::nothrow) std::byte[DeviceOption(m_ptrOptions)->get_bufsize()]; 
+  m_pRxBuffer    = nullptr;
+  if (DeviceOption(m_ptrOptions)->get_mode()==csv_dev_file_options::openmode::read)
+    m_pRxBuffer  = new(std::nothrow) std::byte[DeviceOption(m_ptrOptions)->get_bufsize()]; 
                                                                                                             
   m_nCacheSize   = 0;
   m_nCursor      = 0;
 
-  if (( m_pFile == nullptr ) || ( m_pRxBuffer == nullptr ))
+  if ( ( m_pFile == nullptr ) || ((m_pRxBuffer == nullptr) && (DeviceOption(m_ptrOptions)->get_mode()==csv_dev_file_options::openmode::read)) )
   {
     release();
 
@@ -158,7 +160,12 @@ csv_result csv_dev_file::open()
   *                         On Input, the buffer is filled up to the next newline character when an input operation is requested and the buffer is empty.
   *  _IONBF	No buffering: No buffer is used. Each I/O operation is written as soon as possible. In this case, the buffer and size parameters are ignored.
   */
-  int _iRetVal = setvbuf( m_pFile, nullptr, _IONBF, 0 );
+  int _iRetVal = 0;
+  if (DeviceOption(m_ptrOptions)->get_mode()==csv_dev_file_options::openmode::read)
+    _iRetVal = setvbuf( m_pFile, nullptr, _IONBF, 0 );
+  else
+    _iRetVal = setvbuf( m_pFile, nullptr, _IOFBF, DeviceOption(m_ptrOptions)->get_bufsize() );
+
   if ( _iRetVal != 0 )
   {
     release();
@@ -184,7 +191,7 @@ csv_result csv_dev_file::open()
   {
     case csv_dev_file_options::openmode::write:
     {
-
+      write_bom();
     }; break;
   
     default: // default csv_dev_file_options::openmode::read
@@ -216,7 +223,7 @@ csv_result csv_dev_file::send(const std::byte* pBuffer, csv_uint_t iBufferLen)
   if ( _retVal != csv_result::_ok )
     return _retVal;
 
-  csv_uint_t _wbytes = fwrite((const void*)pBuffer, iBufferLen, 1, m_pFile );
+  csv_uint_t _wbytes = fwrite((const void*)pBuffer, 1, iBufferLen, m_pFile );
   // An error occurs writing data.
   if ( _wbytes != iBufferLen )
   {
