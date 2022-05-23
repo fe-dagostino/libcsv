@@ -77,7 +77,9 @@ set(  LIB_SRC
   ./src/devices/csv_device.cpp
   ./src/devices/csv_dev_file.cpp
   ./src/csv_parser.cpp
+  ./src/csv_base.cpp
   ./src/csv_reader.cpp
+  ./src/csv_writer.cpp
 )
 
 add_library   ( csv${LIB_VERSION_SO}   SHARED ${LIB_SRC} )
