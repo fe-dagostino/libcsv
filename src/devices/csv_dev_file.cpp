@@ -219,6 +219,10 @@ csv_result csv_dev_file::open()
 
 csv_result csv_dev_file::send(const std::byte* pBuffer, csv_uint_t iBufferLen)
 {
+  // Do not allow call to send() when not in writing mode
+  if ( DeviceOption(m_ptrOptions)->get_mode() != csv_dev_file_options::openmode::write )
+    return csv_result::_wrong_call;
+
   csv_result  _retVal = open();
   if ( _retVal != csv_result::_ok )
     return _retVal;
@@ -252,6 +256,10 @@ csv_result csv_dev_file::send(const std::byte* pBuffer, csv_uint_t iBufferLen)
 
 csv_result csv_dev_file::recv(std::byte* pBuffer, csv_uint_t& nBufferLen)
 {
+  // Do not allow call to recv() when not in reading mode
+  if ( DeviceOption(m_ptrOptions)->get_mode() != csv_dev_file_options::openmode::read )
+    return csv_result::_wrong_call;
+
   csv_result  _retVal = open();
   if ( _retVal != csv_result::_ok )
     return _retVal;
@@ -349,7 +357,7 @@ csv_result csv_dev_file::close()
   return csv_result::_ok;
 }
 
-csv_result csv_dev_file::flush()
+csv_result csv_dev_file::flush() noexcept
 {
   if ( m_pFile == nullptr )
     return csv_result::_closed;

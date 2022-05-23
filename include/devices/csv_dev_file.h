@@ -65,13 +65,13 @@ public:
    *
    * @param sFilename    filename.
    */
-  explicit csv_dev_file_options( std::string sFilename, openmode mode, csv_uint_t buf_size = to_bytes<1>::MBytes, filetype bom = filetype::PLAIN_TEXT )
+  explicit csv_dev_file_options( std::string sFilename, openmode mode, csv_uint_t buf_size = to_bytes<1>::MBytes, filetype bom = filetype::PLAIN_TEXT ) noexcept
   : csv_device_options(), m_sFilename(sFilename), m_openMode(mode), m_bom(bom),
     m_bufSize( buf_size )
   {}
 
   /***/
-  virtual ~csv_dev_file_options()
+  virtual ~csv_dev_file_options() noexcept
   {}
 
   /***/
@@ -128,7 +128,7 @@ public:
   /**
    * \return _ok                In case of success.
    */
-  virtual csv_result flush() override;
+  virtual csv_result flush() noexcept override;
 
   /**
    * \return _ok                Device is valid.

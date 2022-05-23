@@ -34,21 +34,22 @@ class csv_device;
 enum class csv_result {
   _ok              = 0x0000,
 
-  _not_implemented = 0x1001,
+  _not_implemented = 0x0001,
+  _wrong_call      = 0x0002,
 
-  _closed          = 0x1002,
-  _no_devs         = 0x0003,
-  _access          = 0x0004,
-  _cfg_error       = 0x0005,
-  _no_mem          = 0x0006,
-  _eof             = 0x0007,
+  _closed          = 0x1001,
+  _no_devs         = 0x1002,
+  _access          = 0x1003,
+  _cfg_error       = 0x1004,
+  _no_mem          = 0x1005,
+  _eof             = 0x1006,
 
-  _tx_error        = 0x0008,
-  _rx_error        = 0x0009,
-  _tx_timedout     = 0x000A,
-  _rx_timedout     = 0x000B,
-  _conn_timeout    = 0x000C,
-  _bom_mismatch    = 0x000D,
+  _tx_error        = 0x0007,
+  _rx_error        = 0x0008,
+  _tx_timedout     = 0x0009,
+  _rx_timedout     = 0x000A,
+  _conn_timeout    = 0x000B,
+  _bom_mismatch    = 0x000C,
 
   _wrong_protocol  = 0x2001,
   _missing_soh,
@@ -68,18 +69,17 @@ class csv_device_events
 {
 protected:
   /***/
-  csv_device_events()
-  {}
+  constexpr csv_device_events() noexcept {}
 public:
   /***/
-  virtual ~csv_device_events() = 0;
+  virtual ~csv_device_events() noexcept {}
 
   /***/
-  virtual void onOpened( const csv_device* pDevice ) = 0;
+  virtual void onOpened( const csv_device* pDevice ) noexcept = 0;
   /***/
-  virtual void onClosed( const csv_device* pDevice ) = 0;
+  virtual void onClosed( const csv_device* pDevice ) noexcept = 0;
   /***/
-  virtual void onError ( const csv_device* pDevice, csv_result result ) = 0;
+  virtual void onError ( const csv_device* pDevice, csv_result result ) noexcept = 0;
 
 };
 
@@ -87,13 +87,10 @@ class csv_device_options
 {
 protected:
   /***/
-  csv_device_options()
-  {}
+  constexpr  csv_device_options() noexcept {}
 public:
   /***/
-  virtual ~csv_device_options()
-  {}
-
+  virtual ~csv_device_options() noexcept {}
 };
 
 class csv_device
@@ -107,15 +104,15 @@ public:
   virtual ~csv_device();
 
   /***/
-  constexpr const std::unique_ptr<csv_device_options>& get_options() const
+  constexpr const std::unique_ptr<csv_device_options>& get_options() const noexcept
   { return m_ptrOptions; }
 
   /***/
-  virtual const std::string& getDeviceName() const
+  virtual const std::string& getDeviceName() const noexcept
   { return m_sDeviceName; }
 
   /***/
-  virtual void       get_stats( csv_dev_stats& stats ) const
+  virtual void               get_stats( csv_dev_stats& stats ) const noexcept
   { stats = m_devStats; }
 
 
@@ -128,13 +125,13 @@ public:
   /***/
   virtual csv_result close() = 0;
   /***/
-  virtual csv_result flush()
+  virtual csv_result flush() noexcept
   { return csv_result::_not_implemented; }
 
   /**
    * \return _res_ok                Device is valid.
    */
-  virtual csv_result is_valid() const = 0;
+  virtual csv_result is_valid() const noexcept = 0;
 
 private:
   const std::string                      m_sDeviceName;
