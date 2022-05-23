@@ -24,15 +24,13 @@
 #ifndef CSV_WRITER_H
 #define CSV_WRITER_H
 
-#include "csv_common.h"
-#include "csv_device.h"
-#include "csv_events.h"
+#include "csv_base.h"
 
 namespace csv {
 inline namespace LIB_VERSION {
 
 /***/
-class csv_writer
+class csv_writer : public csv_base
 {
 public:
   /***/
