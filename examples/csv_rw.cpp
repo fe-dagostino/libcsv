@@ -1,6 +1,7 @@
 
 #include "csv_dev_file.h"
 #include "csv_reader.h"
+#include "csv_writer.h"
 #include <iostream>
 #include <iomanip>    // needed by setprecision
 #include <chrono>
@@ -35,38 +36,59 @@ int main( int argc, char* argv[] )
   std::string filename = argv[1];
 
   // timestamp
+  cout << "----------------------------------------------" << endl;
+  cout << "-------------------READING--------------------" << endl;
   auto ts = chrono::steady_clock::now();
 
+  unique_ptr<csv_dev_file_options> optInput = std::make_unique<csv_dev_file_options>( filename, 
+                                                                                      csv_dev_file_options::openmode::read, 
+                                                                                      to_bytes<8>::MBytes );
+  unique_ptr<csv_dev_file>         devInput = std::make_unique<csv_dev_file>( std::move(optInput),nullptr);
 
-  unique_ptr<csv_dev_file_options> opt = std::make_unique<csv_dev_file_options>( filename, 
-                                                                                 csv_dev_file_options::openmode::read, 
-                                                                                 to_bytes<8>::MBytes );
-  unique_ptr<csv_dev_file>         dev = std::make_unique<csv_dev_file>( std::move(opt),nullptr);
-
-  std::vector<csv_row*>  rows;
-  csv_reader reader( std::move(dev), nullptr );
+  std::vector<csv_row*>  vect_rows;
+  csv_reader reader( std::move(devInput), nullptr );
 
   reader.skip_whitespaces(true);
+  reader.set_eol('\n');
   reader.set_quote('\"');
   
   csv_row*    row = new csv_row();
 
+  reader.open();
   while ( reader.read( *row ) )
   {
-    rows.push_back( row );
+    vect_rows.push_back( row );
     row = new csv_row();
   }
+  reader.close();
 
   auto te = chrono::steady_clock::now();
   print_duration( ts, te );
   
-  cout << rows.size() << endl;
-  
-  for( auto& field : reader.get_header() )
-  {
-    cout <<  field.data().c_str() << ",";
-  }
   cout << endl;
+  cout << "Retrieved [" << vect_rows.size() << "] rows" << endl;
+  cout << "-----------------END READING------------------" << endl << endl;
+  cout << "----------------------------------------------" << endl;
+  cout << "-------------------WRITING--------------------" << endl;
+  auto tsw = chrono::steady_clock::now();
+
+  unique_ptr<csv_dev_file_options> optOutput = std::make_unique<csv_dev_file_options>( filename + ".output", 
+                                                                                      csv_dev_file_options::openmode::write, 
+                                                                                      to_bytes<8>::MBytes,
+                                                                                      csv_dev_file_options::filetype::UTF_8 );
+  unique_ptr<csv_dev_file>         devOutput = std::make_unique<csv_dev_file>( std::move(optOutput),nullptr);
+  csv_writer writer( std::move(devOutput), nullptr );
+
+  writer.open( reader.get_header() );
+  for ( auto row: vect_rows )
+  {
+    writer.write( *row );
+  }
+  writer.close();
+
+  auto tew = chrono::steady_clock::now();
+  print_duration( tsw, tew );
+  cout << "-----------------END WRITING------------------" << endl << endl;
   
   return 0;
 }
