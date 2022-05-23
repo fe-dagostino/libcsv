@@ -39,29 +39,30 @@ public:
   /***/
   csv_field( csv_field&& item )
     : m_bHasQuote(item.m_bHasQuote), m_sData(std::move(item.m_sData))
-  {  }
-
-  /***/
-  csv_field( const string_t& data, bool quoted )
-    : m_bHasQuote(quoted), m_sData(data)
-  {
-  }
+  { }
 
   /***/
   csv_field( string_t&& data, bool quoted )
     : m_bHasQuote(quoted), m_sData(std::move(data))
-  {
-  }
+  { }
+
+  /***/
+  csv_field( const string_t& data, bool quoted )
+    : m_bHasQuote(quoted), m_sData(data)
+  { }
 
   /***/
   ~csv_field()
   {}
 
   /***/
-  constexpr bool               hasquotes() const
+  constexpr void             hasquotes( bool quoted )
+  { m_bHasQuote = quoted; }
+  /***/
+  constexpr bool             hasquotes() const
   { return m_bHasQuote; }
   /***/
-  constexpr const string_t& data() const
+  constexpr const string_t&  data() const
   { return m_sData; }
 
 private:
