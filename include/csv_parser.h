@@ -24,9 +24,8 @@
 #ifndef CSV_PARSER_H
 #define CSV_PARSER_H
 
+#include "csv_base.h"
 #include "csv_field.h"
-#include "csv_device.h"
-#include "csv_events.h"
 #include "csv_data.h"
 
 #include <memory>
@@ -38,7 +37,7 @@ inline namespace LIB_VERSION {
 
 
 
-class csv_parser
+class csv_parser : public csv_base
 {
   enum class Status : uint8_t { 
     eStart = 0, 
@@ -52,48 +51,6 @@ protected:
   csv_parser( std::unique_ptr<csv_device>&& ptrDevice, std::unique_ptr<csv_events>&& ptrEvents );
 
 public:
-  /**
-   * @brief Set field delimeter.
-   *        Default value is comma ','.
-   */
-  constexpr inline void set_delimeter( char ch ) noexcept
-  { m_cDelimeter = ch; }
-  /**
-   * @brief Get field delimeter. 
-   * 
-   * @return the character used between fields.
-   */
-  constexpr inline char get_delimeter() const noexcept
-  { return m_cDelimeter; }
-
-  /**
-   * @brief Set quote delimeter.
-   *        Default value is '\"'.
-   */
-  constexpr inline void set_quote( char ch ) noexcept
-  { m_cQuote = ch; }
-  /**
-   * @brief Get quote delimeter. 
-   * 
-   * @return the character used between fields.
-   */
-  constexpr inline char get_quote() const noexcept
-  { return m_cQuote; }
-
-  /**
-   * @brief Set End of Line marker.
-   *        Default value is '\n'.
-   */
-  constexpr inline void set_eol( char ch ) noexcept
-  { m_cEoL = ch; }
-
-  /**
-   * @brief Get the EoL (End of Line character). 
-   * 
-   * @return the character used to mark the end of current line.
-   */
-  constexpr inline char get_eol() const noexcept
-  { return m_cEoL; }
 
   /**
    * @brief Set the whitespaces to be avoided. Default values are "\a\b\t\v\f\r\n".
@@ -144,8 +101,6 @@ public:
   constexpr const csv_row&     get_header() const noexcept
   { return m_vHeader; }
 
-
-
 protected:
   /***/
   csv_result  parse( csv_row& row ) const noexcept;
@@ -170,15 +125,10 @@ private:
 
 private:
   mutable Status                                     m_eState;
-  char                                               m_cDelimeter;
-  char                                               m_cQuote;
-  char                                               m_cEoL;
   std::string                                        m_sWhitespaces;
   bool                                               m_bSkipWhitespaces;
   bool                                               m_bTrimAll;
   mutable csv_row                                    m_vHeader;
-  std::unique_ptr<csv_device>                        m_ptrDevice;
-  std::unique_ptr<csv_events>                        m_ptrEvents;
 
   mutable std::array<std::byte,to_bytes<32>::KBytes> m_recvCache;
   mutable std::size_t                                m_recvCachedBytes;

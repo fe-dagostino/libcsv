@@ -28,13 +28,11 @@ namespace csv {
 inline namespace LIB_VERSION {
 
 csv_parser::csv_parser( std::unique_ptr<csv_device>&& ptrDevice, std::unique_ptr<csv_events>&& ptrEvents )
-  : m_eState (Status::eStart),
-    m_cDelimeter(','), m_cQuote('\"'), m_cEoL('\n'),
+  : csv_base( std::move(ptrDevice), std::move(ptrEvents) ),
+    m_eState (Status::eStart),
     m_sWhitespaces("\a\b\t\v\f\r\n"),
     m_bSkipWhitespaces(true),
     m_bTrimAll(true),
-    m_ptrDevice( std::move(ptrDevice) ),
-    m_ptrEvents( std::move(ptrEvents) ),
     m_recvCachedBytes( 0 ),
     m_recvCacheCursor( 0 )
 {
