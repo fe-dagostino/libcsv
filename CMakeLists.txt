@@ -26,7 +26,7 @@ set(CMAKE_CXX_STANDARD ${USER_CXX_STANDARD})
 # when compiling with PCH enabled
 set(CMAKE_CXX_EXTENSIONS ON)
 
-IF(GENERATOR_IS_MULTI_CONFIG AND NOT CMAKE_BUILD_TYPE)
+if(GENERATOR_IS_MULTI_CONFIG AND NOT CMAKE_BUILD_TYPE)
   # Make sure that all supported configuration types have their
   # associated conan packages available. You can reduce this
   # list to only the configuration types you use, but only if one
@@ -36,26 +36,26 @@ IF(GENERATOR_IS_MULTI_CONFIG AND NOT CMAKE_BUILD_TYPE)
       Release
       RelWithDebInfo
       MinSizeRel)
-ENDIF()
+endif()
 
 
-IF( CMAKE_BUILD_TYPE STREQUAL "Debug" )
+if( CMAKE_BUILD_TYPE STREQUAL "Debug" )
   set(  LIB_VERSION_SO        -${CMAKE_PROJECT_VERSION}-debug          )
   set(  LIB_VERSION_A         -${CMAKE_PROJECT_VERSION}-static-debug   )
-ELSE()
+else()
   set(  LIB_VERSION_SO        -${CMAKE_PROJECT_VERSION}                )
   set(  LIB_VERSION_A         -${CMAKE_PROJECT_VERSION}-static         )
-ENDIF()
+endif()
 
 set(  LIB_BINARY_DIR 
       ${CMAKE_CURRENT_BINARY_DIR}
    )
 
-IF( CMAKE_BUILD_TYPE STREQUAL "Debug" )
+if( CMAKE_BUILD_TYPE STREQUAL "Debug" )
   add_definitions(
                   -ggdb3
   )
-ENDIF()
+endif()
 
 if(MSVC)
   # warning level 4 and all warnings as errors
@@ -68,6 +68,9 @@ else()
       pthread
   )
 endif()
+
+option(CSV_BUILD_EXAMPLES "Enable/Disable examples build"  ON)
+option(CSV_BUILD_TESTS    "Enable/Disable tests build"    OFF)
 
 set(  LIB_INCLUDE
 
@@ -90,5 +93,10 @@ target_link_libraries( ${CMAKE_PROJECT_NAME}${LIB_VERSION_A}   ${EXT_LIBRARIES} 
 target_link_libraries( ${CMAKE_PROJECT_NAME}${LIB_VERSION_SO}  ${CMAKE_DL_LIBS} )
 target_link_libraries( ${CMAKE_PROJECT_NAME}${LIB_VERSION_A}   ${CMAKE_DL_LIBS} )
 
+if ( CSV_BUILD_EXAMPLES )
+  add_subdirectory(examples)
+endif()
 
-add_subdirectory(examples)
+if ( CSV_BUILD_TESTS )
+  add_subdirectory(tests)
+endif()
