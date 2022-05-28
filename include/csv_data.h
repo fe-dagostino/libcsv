@@ -93,7 +93,7 @@ public:
       typedef std::forward_iterator_tag iterator_category;
 
       /***/
-      constexpr const_iterator(pointer ptr) 
+      constexpr const_iterator(const_pointer ptr) 
       : m_ptr(ptr)
       { }
 
@@ -126,7 +126,7 @@ public:
       { return m_ptr != rhs.m_ptr; }
 
     private:
-      const_pointer m_ptr;
+      mutable const_pointer m_ptr;
   };
 
 public:
@@ -190,7 +190,11 @@ public:
    */
   constexpr size_type  size() const noexcept
   { return (this->length()*data_type_size); }
-  /***/
+  /**
+   * @brief Retrieve length in terms of items currently in the buffer.
+   * 
+   * @return current items in the data buffer. 
+   */
   constexpr size_type  length() const noexcept
   { return m_nLength; }
 
@@ -336,10 +340,10 @@ public:
 
   /***/
   constexpr const_iterator begin() const noexcept
-  { return iterator( data() ); }
+  { return const_iterator( data() ); }
   /***/
   constexpr const_iterator end() const noexcept
-  { return iterator( data()+max_size() ); }
+  { return const_iterator( data()+max_size() ); }
 
 
   /***/
@@ -372,6 +376,14 @@ public:
     }
   }
 
+  /***/
+  constexpr const data_t& operator[]( size_type index ) const noexcept
+  { return data()[index]; }
+
+  /***/
+  constexpr       data_t& operator[]( size_type index ) noexcept
+  { return data()[index]; }
+
 private:
   pointer      m_pData;
   size_type    m_nMaxSize;
@@ -379,6 +391,21 @@ private:
   
 };
 
+template<typename data_t, typename data_size_t, data_size_t chunk_size>
+constexpr bool operator==( const csv_data<data_t,data_size_t,chunk_size>& lhs, const csv_data<data_t,data_size_t,chunk_size>& rhs)
+{
+  // Due to optimization at build time performed by compile and due to optimization done by glibc at runtime
+  // usage of memcmp() give better results than other implementations
+  return (lhs.length() == rhs.length()) && (memcmp(lhs.data(),rhs.data(),lhs.size())==0);
+}
+
+template<typename data_t, typename data_size_t, data_size_t chunk_size>
+constexpr bool operator!=( const csv_data<data_t,data_size_t,chunk_size>& lhs, const csv_data<data_t,data_size_t,chunk_size>& rhs)
+{
+  // Due to optimization at build time performed by compile and due to optimization done by glibc at runtime
+  // usage of memcmp() give better results than other implementations
+  return (lhs.length() != rhs.length()) || (memcmp(lhs.data(),rhs.data(),std::min(lhs.size(),rhs.size()))!=0);
+}
 
 } //inline namespace
 } // namespace
