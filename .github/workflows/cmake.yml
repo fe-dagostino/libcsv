@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        conifig:
+        config:
         - {
             name: "Ubuntu_Latest_GCC",
             os: ubuntu-latest,
