@@ -14,6 +14,7 @@ set(  DEFAULT_LIBRARIES
       csv${LIB_VERSION_SO}
 )
 
+set(CMAKE_CXX_CPPCHECK "cppcheck")
 
 add_executable( csv_rw                                csv_rw.cpp             )
 add_executable( csv_data_vs_string                    csv_data_vs_string.cpp )
