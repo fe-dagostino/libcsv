@@ -92,7 +92,7 @@ public:
    * @return true  if the header is not already set
    * @return false if the header is already valorized, in such case parameter will be ignore.
    */
-  constexpr bool               set_header( csv_row&& header ) noexcept;
+  inline bool                  set_header( csv_row&& header ) noexcept;
   /**
    * @brief Get the header. 
    * 

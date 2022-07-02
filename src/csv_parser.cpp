@@ -38,7 +38,7 @@ csv_parser::csv_parser( std::unique_ptr<csv_device> ptrDevice, std::unique_ptr<c
 {
 }
 
-constexpr bool  csv_parser::set_header( csv_row&& header ) noexcept
+bool  csv_parser::set_header( csv_row&& header ) noexcept
 { 
   bool bRetVal = false;
   if ( m_vHeader.empty() )
