@@ -25,7 +25,7 @@
 #define CSV_DATA_H
 
 #include "csv_common.h"
-#include <string.h>
+#include <cstring>
 
 namespace csv {
 inline namespace LIB_VERSION {
@@ -233,16 +233,16 @@ public:
     if (length == max_size())
       return;
 
-    pointer pNewData = static_cast<pointer>(realloc( m_pData, length * data_type_size ));
+    pointer pNewData = static_cast<pointer>(std::realloc( m_pData, length * data_type_size ));
     if ( pNewData != nullptr ) {
       m_pData     = pNewData;
 
       if ( length > max_size() ) {
-        memset( m_pData+this->length(), '\0', (length-this->length()) * data_type_size );
+        std::memset( m_pData+this->length(), '\0', (length-this->length()) * data_type_size );
       } else {
         // In this case previous buffer has been truncated and then last
         // character in the buffer will be set to '\0'
-        memset( m_pData+(length-1), '\0', data_type_size );
+        std::memset( m_pData+(length-1), '\0', data_type_size );
       }
 
       m_nMaxSize = length;
@@ -273,7 +273,7 @@ public:
    */
   constexpr void clear() noexcept
   { 
-    memset( m_pData, '\0', this->capacity() );
+    std::memset( m_pData, '\0', this->capacity() );
     m_nLength = 0; 
   }
 
@@ -300,7 +300,7 @@ public:
   constexpr void pop_back() noexcept
   {
     if( empty() == 0 ){
-      memset( &m_pData[m_nLength--], '\0', data_type_size );
+      std::memset( &m_pData[m_nLength--], '\0', data_type_size );
     }
   }
 
@@ -345,7 +345,6 @@ public:
   constexpr const_iterator end() const noexcept
   { return const_iterator( data()+max_size() ); }
 
-
   /***/
   constexpr csv_data&       operator=( csv_data&& data ) noexcept
   { 
@@ -369,7 +368,7 @@ public:
   {
     if ( m_pData != nullptr )
     {
-      free (m_pData);
+      std::free (m_pData);
       m_pData     = nullptr;
       m_nMaxSize  = 0;
       m_nLength   = 0;
@@ -396,7 +395,7 @@ constexpr bool operator==( const csv_data<data_t,data_size_t,chunk_size>& lhs, c
 {
   // Due to optimization at build time performed by compile and due to optimization done by glibc at runtime
   // usage of memcmp() give better results than other implementations
-  return (lhs.length() == rhs.length()) && (memcmp(lhs.data(),rhs.data(),lhs.size())==0);
+  return (lhs.length() == rhs.length()) && (std::memcmp(lhs.data(),rhs.data(),lhs.size())==0);
 }
 
 template<typename data_t, typename data_size_t, data_size_t chunk_size>
@@ -404,7 +403,7 @@ constexpr bool operator!=( const csv_data<data_t,data_size_t,chunk_size>& lhs, c
 {
   // Due to optimization at build time performed by compile and due to optimization done by glibc at runtime
   // usage of memcmp() give better results than other implementations
-  return (lhs.length() != rhs.length()) || (memcmp(lhs.data(),rhs.data(),std::min(lhs.size(),rhs.size()))!=0);
+  return (lhs.length() != rhs.length()) || (std::memcmp(lhs.data(),rhs.data(),std::min(lhs.size(),rhs.size()))!=0);
 }
 
 } //inline namespace
