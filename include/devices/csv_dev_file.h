@@ -116,12 +116,12 @@ public:
    * \return _cfg_error     Error appling configuration on specified device.
    */
   virtual csv_result open() override;
-  virtual csv_result send(const std::byte* pBuffer, csv_uint_t nBufferLen) override;
+  virtual csv_result send(const byte* pBuffer, csv_uint_t nBufferLen) override;
   /**
    * \return _rx_error
    * \return _rx_timedout
    */
-  virtual csv_result recv( std::byte* pBuffer, csv_uint_t& nBufferLen) override;
+  virtual csv_result recv( byte* pBuffer, csv_uint_t& nBufferLen) override;
   
   virtual csv_result close() override;
 
@@ -147,7 +147,7 @@ private:
 
 private:
   FILE*        m_pFile;
-  std::byte*   m_pRxBuffer;
+  byte*        m_pRxBuffer;
   csv_uint_t   m_nCacheSize;
   csv_uint_t   m_nCursor;
 

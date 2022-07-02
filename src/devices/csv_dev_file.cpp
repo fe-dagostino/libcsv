@@ -75,8 +75,8 @@ csv_dev_file::~csv_dev_file()
 csv_dev_file_options::filetype  csv_dev_file::detect_and_skip_bom() noexcept
 {
   csv_dev_file_options::filetype _retVal = csv_dev_file_options::filetype::PLAIN_TEXT;
-  std::byte                      _rxBOM[4];
-  size_t                         _bom_size = fread( _rxBOM, sizeof(std::byte), 4, m_pFile );
+  byte                           _rxBOM[4];
+  size_t                         _bom_size = fread( _rxBOM, sizeof(byte), 4, m_pFile );
 
   for ( uint8_t ndx = 1; ndx < static_cast<uint8_t>(csv_dev_file_options::filetype::MAX_VALUE); ++ndx )
   { 
@@ -113,7 +113,7 @@ void  csv_dev_file::write_bom() noexcept
     case csv_dev_file_options::filetype::GB_18030:
     {
       uint8_t ndx = static_cast<uint8_t>(DeviceOption(m_ptrOptions)->get_bom());
-      send( reinterpret_cast<const std::byte*>(&__BOM__[ndx][1]), __BOM__[ndx][0] );
+      send( reinterpret_cast<const byte*>(&__BOM__[ndx][1]), __BOM__[ndx][0] );
     }; break;
   
     default:
@@ -134,8 +134,8 @@ csv_result csv_dev_file::open()
   // Note that using an raw pointer instead of a smart pointer increase performances for the cached methods.
   m_pRxBuffer    = nullptr;
   if (DeviceOption(m_ptrOptions)->get_mode()==csv_dev_file_options::openmode::read)
-    m_pRxBuffer  = new(std::nothrow) std::byte[DeviceOption(m_ptrOptions)->get_bufsize()]; 
-                                                                                                            
+    m_pRxBuffer  = new(std::nothrow) byte[DeviceOption(m_ptrOptions)->get_bufsize()]; 
+
   m_nCacheSize   = 0;
   m_nCursor      = 0;
 
@@ -217,7 +217,7 @@ csv_result csv_dev_file::open()
   return _retVal;
 }
 
-csv_result csv_dev_file::send(const std::byte* pBuffer, csv_uint_t iBufferLen)
+csv_result csv_dev_file::send(const byte* pBuffer, csv_uint_t iBufferLen)
 {
   // Do not allow call to send() when not in writing mode
   if ( DeviceOption(m_ptrOptions)->get_mode() != csv_dev_file_options::openmode::write )
@@ -254,7 +254,7 @@ csv_result csv_dev_file::send(const std::byte* pBuffer, csv_uint_t iBufferLen)
   return _retVal;
 }
 
-csv_result csv_dev_file::recv(std::byte* pBuffer, csv_uint_t& nBufferLen)
+csv_result csv_dev_file::recv(byte* pBuffer, csv_uint_t& nBufferLen)
 {
   // Do not allow call to recv() when not in reading mode
   if ( DeviceOption(m_ptrOptions)->get_mode() != csv_dev_file_options::openmode::read )
