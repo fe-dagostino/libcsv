@@ -31,13 +31,14 @@ inline namespace LIB_VERSION {
 
 class csv_events
 {
-  enum class Error : uint8_t { 
-    eNone          = 0, 
-    eAccess        = 1,
-    eWrongFormat   = 2
-  };
+protected:
+  /***/
+  constexpr csv_events()
+  {}
 
 public:
+  /***/
+  virtual ~csv_events() {}
 
   /**
    * @brief Invoked when reading/writing operation start.
@@ -54,7 +55,7 @@ public:
   /**
    * @brief Invoked at each row on r/w operations.
    */
-  virtual void onRow    ( const csv_row& row    ) = 0;
+  virtual void onRow    ( const csv_row& header, const csv_row& row ) = 0;
 
   /**
    * @brief Invoked when reading/writing operation have been completed.
@@ -62,7 +63,7 @@ public:
   virtual void onEnd() = 0;
 
   /***/
-  virtual void onError( Error eCode ) = 0;
+  virtual void onError( csv_result eCode ) = 0;
 
 };
 
