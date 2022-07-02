@@ -27,7 +27,7 @@ namespace csv {
 inline namespace LIB_VERSION {
 
 
-csv_reader::csv_reader( std::unique_ptr<csv_device>&& ptrDevice, std::unique_ptr<csv_events>&& ptrEvents )
+csv_reader::csv_reader( std::unique_ptr<csv_device> ptrDevice, std::unique_ptr<csv_events> ptrEvents )
   : csv_parser( std::move(ptrDevice), std::move(ptrEvents) )
 {}
 

@@ -35,7 +35,7 @@ class csv_reader : public csv_parser
 {
 public:
   /***/
-  csv_reader( std::unique_ptr<csv_device>&& ptrDevice, std::unique_ptr<csv_events>&& ptrEvents );
+  csv_reader( std::unique_ptr<csv_device> ptrDevice, std::unique_ptr<csv_events> ptrEvents );
 
   /***/
   bool open();
