@@ -31,34 +31,6 @@ inline namespace LIB_VERSION {
 
 class csv_device;
 
-enum class csv_result {
-  _ok              = 0x0000,
-
-  _not_implemented = 0x0001,
-  _wrong_call      = 0x0002,
-
-  _closed          = 0x1001,
-  _no_devs         = 0x1002,
-  _access          = 0x1003,
-  _cfg_error       = 0x1004,
-  _no_mem          = 0x1005,
-  _eof             = 0x1006,
-
-  _tx_error        = 0x0007,
-  _rx_error        = 0x0008,
-  _tx_timedout     = 0x0009,
-  _rx_timedout     = 0x000A,
-  _conn_timeout    = 0x000B,
-  _bom_mismatch    = 0x000C,
-
-  _wrong_protocol  = 0x2001,
-  _missing_soh,
-  _wrong_soh,
-  _wrong_crc,
-  _empty_sentence
-
-};
-
 struct csv_dev_stats {
   csv_uint_t   rx;
   csv_uint_t   tx;
@@ -119,9 +91,9 @@ public:
   /***/
   virtual csv_result open() = 0;
   /***/
-  virtual csv_result send( const std::byte* pBuffer, csv_uint_t iBufferLen ) = 0;
+  virtual csv_result send( const byte* pBuffer, csv_uint_t iBufferLen ) = 0;
   /***/
-  virtual csv_result recv( std::byte* pBuffer, csv_uint_t& iBufferLen ) = 0;
+  virtual csv_result recv( byte* pBuffer, csv_uint_t& iBufferLen ) = 0;
   /***/
   virtual csv_result close() = 0;
   /***/
