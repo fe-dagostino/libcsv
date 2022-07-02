@@ -42,7 +42,7 @@ class csv_base
 {
 protected:
   /***/
-  csv_base( std::unique_ptr<csv_device>&& ptrDevice, std::unique_ptr<csv_events>&& ptrEvents );
+  csv_base( std::unique_ptr<csv_device> ptrDevice, std::unique_ptr<csv_events> ptrEvents );
 
 public:
   /**
