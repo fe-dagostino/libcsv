@@ -27,7 +27,7 @@ namespace csv {
 inline namespace LIB_VERSION {
 
 
-csv_writer::csv_writer( std::unique_ptr<csv_device>&& ptrDevice, std::unique_ptr<csv_events>&& ptrEvents )
+csv_writer::csv_writer( std::unique_ptr<csv_device> ptrDevice, std::unique_ptr<csv_events> ptrEvents )
   : csv_base( std::move(ptrDevice), std::move(ptrEvents) )
 {}
 
@@ -42,20 +42,20 @@ bool csv_writer::write( const csv_row& row )
   {
     auto& field = row.at(ndx);
     if ( field.hasquotes() )
-      m_ptrDevice->send( reinterpret_cast<const std::byte*>(&get_quote()), field.data().type_size() );
+      m_ptrDevice->send( reinterpret_cast<const byte*>(&get_quote()), field.data().type_size() );
 
     if ( field.data().empty() == false )
     {
-      m_ptrDevice->send( reinterpret_cast<const std::byte*>(field.data().data()), field.data().size() );
+      m_ptrDevice->send( reinterpret_cast<const byte*>(field.data().data()), field.data().size() );
     }
 
     if ( field.hasquotes() )
-      m_ptrDevice->send( reinterpret_cast<const std::byte*>(&get_quote()), field.data().type_size() );
+      m_ptrDevice->send( reinterpret_cast<const byte*>(&get_quote()), field.data().type_size() );
 
     if ( ndx < row.size()-1 )
-      m_ptrDevice->send( reinterpret_cast<const std::byte*>(&get_delimeter()), field.data().type_size() );
+      m_ptrDevice->send( reinterpret_cast<const byte*>(&get_delimeter()), field.data().type_size() );
     else
-      m_ptrDevice->send( reinterpret_cast<const std::byte*>(&get_eol()), field.data().type_size() );
+      m_ptrDevice->send( reinterpret_cast<const byte*>(&get_eol()), field.data().type_size() );
   }
 
   return true;
