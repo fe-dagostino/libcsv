@@ -48,7 +48,7 @@ class csv_parser : public csv_base
 
 protected:
   /***/
-  csv_parser( std::unique_ptr<csv_device>&& ptrDevice, std::unique_ptr<csv_events>&& ptrEvents );
+  csv_parser( std::unique_ptr<csv_device> ptrDevice, std::unique_ptr<csv_events> ptrEvents );
 
 public:
 
@@ -92,7 +92,7 @@ public:
    * @return true  if the header is not already set
    * @return false if the header is already valorized, in such case parameter will be ignore.
    */
-  inline bool                  set_header( csv_row&& header ) noexcept;
+  constexpr bool               set_header( csv_row&& header ) noexcept;
   /**
    * @brief Get the header. 
    * 
@@ -130,7 +130,7 @@ private:
   bool                                               m_bTrimAll;
   mutable csv_row                                    m_vHeader;
 
-  mutable std::array<std::byte,to_bytes<32>::KBytes> m_recvCache;
+  mutable std::array<byte,to_bytes<32>::KBytes>      m_recvCache;
   mutable std::size_t                                m_recvCachedBytes;
   mutable std::size_t                                m_recvCacheCursor;
   mutable csv_data<char,size_t>                      m_sData;

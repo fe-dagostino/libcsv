@@ -27,7 +27,7 @@
 namespace csv {
 inline namespace LIB_VERSION {
 
-csv_parser::csv_parser( std::unique_ptr<csv_device>&& ptrDevice, std::unique_ptr<csv_events>&& ptrEvents )
+csv_parser::csv_parser( std::unique_ptr<csv_device> ptrDevice, std::unique_ptr<csv_events> ptrEvents )
   : csv_base( std::move(ptrDevice), std::move(ptrEvents) ),
     m_eState (Status::eStart),
     m_sWhitespaces("\a\b\t\v\f\r\n"),
@@ -38,7 +38,7 @@ csv_parser::csv_parser( std::unique_ptr<csv_device>&& ptrDevice, std::unique_ptr
 {
 }
 
-bool  csv_parser::set_header( csv_row&& header ) noexcept
+constexpr bool  csv_parser::set_header( csv_row&& header ) noexcept
 { 
   bool bRetVal = false;
   if ( m_vHeader.empty() )
@@ -60,6 +60,8 @@ csv_result csv_parser::parse_row( csv_row& row ) const noexcept
   bool          _bQuoted   = false;
 
   m_sData.clear();
+  if ( row.empty() == false  )
+    row.clear();
 
   do
   {
@@ -69,6 +71,9 @@ csv_result csv_parser::parse_row( csv_row& row ) const noexcept
       csv_result _result = m_ptrDevice->recv( m_recvCache.data(), m_recvCachedBytes );
       if ( (_result != csv_result::_ok) && (m_recvCachedBytes==0) ) {
         _retVal = _result;
+        if (m_ptrEvents != nullptr) {
+          m_ptrEvents->onError( _result );
+        }
         break;
       }
       m_recvCacheCursor = 0; 
@@ -189,6 +194,7 @@ csv_result  csv_parser::parse( csv_row& row ) const noexcept
 {
   csv_result    _res   = csv_result::_ok;
   bool          _bExit = false;
+
   do
   {
     switch (m_eState)
@@ -227,8 +233,12 @@ csv_result  csv_parser::parse( csv_row& row ) const noexcept
         _res = parse_row( row );
         if ( _res == csv_result::_ok  ){
           // Invoke event interface  
-          if (m_ptrEvents != nullptr) {
-            m_ptrEvents->onRow( row );
+          if (m_ptrEvents != nullptr) 
+          {
+            if ( row.size() != m_vHeader.size() )
+              m_ptrEvents->onError( csv_result::_row_items_error );
+
+            m_ptrEvents->onRow( m_vHeader, row );
           }
 
           _bExit = true;
