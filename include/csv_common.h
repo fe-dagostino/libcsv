@@ -34,16 +34,47 @@ namespace csv {
 inline namespace LIB_VERSION {
 
 typedef uint64_t    csv_uint_t;
+typedef uint8_t     byte;
 
 template < csv_uint_t qnt = 1 >
 struct to_bytes {
   enum : uint64_t { 
-    Bytes  =    1 * qnt,
-    KBytes = 1024 * qnt,
-    MBytes = 1024 * 1024 * qnt,
-    GBytes = 1024 * 1024 * 1024 * qnt
+    Bytes  =    1u * qnt,
+    KBytes = 1024u * qnt,
+    MBytes = 1024u * 1024u * qnt,
+    GBytes = 1024u * 1024u * 1024u * qnt
   };
 };
+
+enum class csv_result {
+  _ok              = 0x0000,
+
+  _not_implemented = 0x0001,
+  _wrong_call      = 0x0002,
+
+  _closed          = 0x1001,
+  _no_devs         = 0x1002,
+  _access          = 0x1003,
+  _cfg_error       = 0x1004,
+  _no_mem          = 0x1005,
+  _eof             = 0x1006,
+
+  _tx_error        = 0x0007,
+  _rx_error        = 0x0008,
+  _tx_timedout     = 0x0009,
+  _rx_timedout     = 0x000A,
+  _conn_timeout    = 0x000B,
+  _bom_mismatch    = 0x000C,
+  _row_items_error = 0x000D,  
+
+  _wrong_protocol  = 0x2001,
+  _missing_soh,
+  _wrong_soh,
+  _wrong_crc,
+  _empty_sentence
+
+};
+
 
 } //inline namespace
 } // namespace
