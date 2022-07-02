@@ -42,10 +42,11 @@ jobs:
       if: startsWith( matrix.config.name, 'Ubuntu_Latest_GCC') 
       run: |
         sudo apt-get update
-        sudo apt-get install ninja-build cmake gcc-11 g++11
+        sudo apt-get install ninja-build cmake 
+        sudo apt-get install gcc-11 
+        sudo apt-get install g++-11
         sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 100 --slave /usr/bin/g++ g++ /usr/bin/g++-11 --slave /usr/bin/gcov gcov /usr/bin/gcov-11
         sudo update-alternatives --set gcc /usr/bin/gcc-11
-        echo "CXX=g++-11" >> $GITHUB_ENV        
         ninja --version
         cmake --version
         gcc --version
