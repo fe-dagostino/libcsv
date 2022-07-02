@@ -8,13 +8,15 @@ project( examples
 # libcsv can be found, even if it is not installed system-wide yet.
 LINK_DIRECTORIES( ${LIB_BINARY_DIR} )
 
-
-
 set(  DEFAULT_LIBRARIES
       csv${LIB_VERSION_SO}
 )
 
-set(CMAKE_CXX_CPPCHECK "cppcheck")
+option(CSV_ENABLE_CPPCHECK    "Enable/Disable cppcheck"    OFF)
+
+if ( CSV_ENABLE_CPPCHECK )
+  set(CMAKE_CXX_CPPCHECK "cppcheck")
+endif()
 
 add_executable( csv_rw                                csv_rw.cpp             )
 add_executable( csv_data_vs_string                    csv_data_vs_string.cpp )
