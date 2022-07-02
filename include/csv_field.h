@@ -37,22 +37,22 @@ class csv_field
 {
 public:
   /***/
-  csv_field( csv_field&& item )
+  constexpr csv_field( csv_field&& item )
     : m_bHasQuote(item.m_bHasQuote), m_sData(std::move(item.m_sData))
   { }
 
   /***/
-  csv_field( string_t&& data, bool quoted )
+  constexpr csv_field( string_t&& data, bool quoted )
     : m_bHasQuote(quoted), m_sData(std::move(data))
   { }
 
   /***/
-  csv_field( const string_t& data, bool quoted )
+  constexpr csv_field( const string_t& data, bool quoted )
     : m_bHasQuote(quoted), m_sData(data)
   { }
 
   /***/
-  ~csv_field()
+  constexpr ~csv_field()
   {}
 
   /***/
@@ -71,7 +71,9 @@ private:
 
 };
 
-typedef std::vector<csv_field<csv_data<char,size_t>>>                 csv_row;
+typedef csv_data<char,size_t>         csv_data_t;
+typedef csv_field<csv_data_t>         csv_field_t;
+typedef std::vector<csv_field_t>      csv_row;
 
 
 } //inline namespace
