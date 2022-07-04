@@ -4,7 +4,7 @@ set(libname "csv")
 
 # Set the project name and language
 project( ${libname}
-         VERSION 0.0.1
+         VERSION 0.1.0
          DESCRIPTION "CSV parser."
          LANGUAGES CXX C
 )
@@ -74,23 +74,18 @@ endif()
 option(CSV_BUILD_EXAMPLES "Enable/Disable examples build"  ON)
 option(CSV_BUILD_TESTS    "Enable/Disable tests build"    OFF)
 
-set(  LIB_INCLUDE
+file( GLOB_RECURSE 
+      LIB_INCLUDE
+      ${PROJECT_SOURCE_DIR}/include/*.h
+    )
 
-)
+file( GLOB_RECURSE 
+      LIB_SRC
+      ${PROJECT_SOURCE_DIR}/src/*.cpp
+    )
 
-set(  LIB_SRC
-  ./src/devices/csv_device.cpp
-  ./src/devices/csv_dev_file.cpp
-  ./src/csv_parser.cpp
-  ./src/csv_base.cpp
-  ./src/csv_reader.cpp
-  ./src/csv_writer.cpp
-)
-
-add_subdirectory(src)
-
-add_library   ( ${libname}${LIB_VERSION_SO}   SHARED ${LIB_SRC} ${LIB_DEVICES_SRC} )
-add_library   ( ${libname}${LIB_VERSION_A}    STATIC ${LIB_SRC} ${LIB_DEVICES_SRC} )
+add_library   ( ${libname}${LIB_VERSION_SO}   SHARED ${LIB_SRC} )
+add_library   ( ${libname}${LIB_VERSION_A}    STATIC ${LIB_SRC} )
 
 target_link_libraries( ${libname}${LIB_VERSION_SO}  ${EXT_LIBRARIES} )
 target_link_libraries( ${libname}${LIB_VERSION_A}   ${EXT_LIBRARIES} )
