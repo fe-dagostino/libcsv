@@ -24,7 +24,7 @@
 #ifndef CSV_COMMON_H
 #define CSV_COMMON_H
 
-#define LIB_VERSION  v1_0_0
+#include "config.h"
 
 #include <stdlib.h>
 #include <memory>

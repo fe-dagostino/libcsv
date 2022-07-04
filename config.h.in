@@ -1,0 +1,11 @@
+#ifndef CSV_CONFIG_H
+#define CSV_CONFIG_H
+
+
+#define LIB_VERSION_MAJOR           @csv_VERSION_MAJOR@
+#define LIB_VERSION_MINOR           @csv_VERSION_MINOR@
+#define LIB_VERSION_PATCH           @csv_VERSION_PATCH@
+
+#define LIB_VERSION   v@csv_VERSION_MAJOR@_@csv_VERSION_MINOR@_@csv_VERSION_PATCH@
+
+#endif //CSV_CONFIG_H
