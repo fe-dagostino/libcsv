@@ -9,10 +9,10 @@ project( ${libname}
          LANGUAGES CXX C
 )
 
-configure_file(config.h.in ${CMAKE_SOURCE_DIR}/include/config.h)
+configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/include/config.h)
 
-include_directories( ${CMAKE_SOURCE_DIR}/include         )
-include_directories( ${CMAKE_SOURCE_DIR}/include/devices )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include         )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include/devices )
 
 # uncomment to set a default CXX standard for the external tools like clang-tidy and cppcheck
 # and the targets that do not specify a standard.
@@ -76,12 +76,12 @@ option(CSV_BUILD_TESTS    "Enable/Disable tests build"    OFF)
 
 file( GLOB_RECURSE 
       LIB_INCLUDE
-      ${PROJECT_SOURCE_DIR}/include/*.h
+      ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
     )
 
 file( GLOB_RECURSE 
       LIB_SRC
-      ${PROJECT_SOURCE_DIR}/src/*.cpp
+      ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
     )
 
 add_library   ( ${libname}${LIB_VERSION_SO}   SHARED ${LIB_SRC} )
