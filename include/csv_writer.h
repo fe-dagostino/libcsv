@@ -34,7 +34,7 @@ class csv_writer : public csv_base
 {
 public:
   /***/
-  csv_writer( std::unique_ptr<csv_device> ptrDevice, std::unique_ptr<csv_events> ptrEvents );
+  csv_writer( mem_unique_ptr<csv_device> ptrDevice, mem_unique_ptr<csv_events> ptrEvents );
 
   /***/
   bool open( const csv_row& header );

@@ -27,12 +27,25 @@
 namespace csv {
 inline namespace LIB_VERSION {
 
-csv_base::csv_base( std::unique_ptr<csv_device> ptrDevice, std::unique_ptr<csv_events> ptrEvents )
+csv_base::csv_base( mem_unique_ptr<csv_device> ptrDevice, mem_unique_ptr<csv_events> ptrEvents )
   : m_cDelimeter(','), m_cQuote('\"'), m_cEoL('\n'),
     m_ptrDevice( std::move(ptrDevice) ),
     m_ptrEvents( std::move(ptrEvents) )
 {
 }
+
+csv_base::~csv_base()
+{
+  if ( dynamic_cast<csv_base*>(m_ptrDevice.get()) ==  this )
+  {
+    m_ptrDevice.release();
+  }
+
+  if ( dynamic_cast<csv_base*>(m_ptrEvents.get()) ==  this )
+  {
+    m_ptrEvents.release();
+  }
+}       
 
 
 } //inline namespace

@@ -42,7 +42,9 @@ class csv_base
 {
 protected:
   /***/
-  csv_base( std::unique_ptr<csv_device> ptrDevice, std::unique_ptr<csv_events> ptrEvents );
+  csv_base( mem_unique_ptr<csv_device> ptrDevice, mem_unique_ptr<csv_events> ptrEvents );
+  /***/
+  virtual ~csv_base();
 
 public:
   /**
@@ -89,11 +91,11 @@ public:
   { return m_cEoL; }
 
 protected:
-  char                                    m_cDelimeter;
-  char                                    m_cQuote;
-  char                                    m_cEoL;
-  std::unique_ptr<csv_device>             m_ptrDevice;
-  std::unique_ptr<csv_events>             m_ptrEvents;
+  char                                   m_cDelimeter;
+  char                                   m_cQuote;
+  char                                   m_cEoL;
+  mem_unique_ptr<csv_device>             m_ptrDevice;
+  mem_unique_ptr<csv_events>             m_ptrEvents;
 
 };
 

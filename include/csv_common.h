@@ -25,9 +25,9 @@
 #define CSV_COMMON_H
 
 #include "config.h"
+#include "mem_unique_ptr.h"
 
 #include <stdlib.h>
-#include <memory>
 #include <string>
 
 namespace csv {
@@ -74,6 +74,7 @@ enum class csv_result {
   _empty_sentence
 
 };
+
 
 
 } //inline namespace

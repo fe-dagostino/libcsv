@@ -103,7 +103,7 @@ public:
   /**
    * @brief csv_dev_file Constructs a csv_dev_file
    */
-  explicit csv_dev_file( std::unique_ptr<csv_dev_file_options> ptrDeviceOptions, std::unique_ptr<csv_device_events> ptrEvents = nullptr);
+  explicit csv_dev_file( mem_unique_ptr<csv_dev_file_options> ptrDeviceOptions, mem_unique_ptr<csv_device_events> ptrEvents = nullptr);
   
   /***/
   virtual ~csv_dev_file();

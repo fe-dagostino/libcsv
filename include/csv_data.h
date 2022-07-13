@@ -35,14 +35,14 @@ template<typename data_t, typename data_size_t, data_size_t chunk_size = to_byte
 class csv_data
 {
 public:
-  typedef data_t             value_type; 
-  typedef data_size_t        size_type;
-  typedef data_t&            reference;
-  typedef const data_t&      const_reference;
-  typedef data_t*            pointer;
-  typedef const data_t*      const_pointer;
+  using value_type      = data_t; 
+  using size_type       = data_size_t;
+  using reference       = data_t&;
+  using const_reference = const data_t&;
+  using pointer         = data_t*;
+  using const_pointer   = const data_t*;
 
-  static const size_type data_type_size = sizeof(value_type);
+  static constexpr const size_type data_type_size = sizeof(value_type);
 
   class iterator
   {

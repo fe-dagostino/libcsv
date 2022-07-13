@@ -27,12 +27,19 @@
 #include "csv_common.h"
 #include "csv_data.h"
 #include <vector>
+#include <concepts>
+#include <type_traits>
 
 namespace csv {
 inline namespace LIB_VERSION {
 
+template<typename T>
+concept String_t = requires (){
+  std::is_object_v<T>;
+};
 
-template<typename string_t>
+
+template<String_t string_t>
 class csv_field
 {
 public:
