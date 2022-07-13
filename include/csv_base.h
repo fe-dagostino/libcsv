@@ -30,8 +30,6 @@
 #include "csv_data.h"
 
 #include <memory>
-#include <functional>
-#include <map>
 
 namespace csv {
 inline namespace LIB_VERSION {
