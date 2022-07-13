@@ -104,6 +104,9 @@ public:
   /***/
   constexpr bool    auto_delete() const noexcept
   { return _auto_delete; }
+  /***/
+  constexpr void    auto_delete( bool autodelete ) noexcept
+  { _auto_delete = autodelete; }
 
   /* Return true if the stored pointer is not null. */
   constexpr operator bool() const noexcept
