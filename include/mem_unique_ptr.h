@@ -25,9 +25,10 @@ public:
     : _ptr( nullptr ), _auto_delete( true )
   { }
 
-  /***/
-  template<Derived<value_type> T>
-  constexpr mem_unique_ptr( const mem_unique_ptr<T>& ptr ) noexcept = delete;
+  /**
+   * @brief explicity disable copy constructor.
+   */
+  constexpr mem_unique_ptr( const mem_unique_ptr<value_type>& ptr ) noexcept = delete;
 
   /***/
   template<Derived<value_type> T>
@@ -57,9 +58,10 @@ public:
     }
   }
 
-  /***/
-  template<Derived<value_type> T>
-  constexpr reference operator=( const mem_unique_ptr<T>& ptr ) noexcept = delete;
+  /**
+   * @brief explicity disable assignment operator.
+   */
+  constexpr mem_unique_ptr<value_type>& operator=( const mem_unique_ptr<value_type>& ptr ) noexcept = delete;
 
   /***/
   template<Derived<value_type> T>
