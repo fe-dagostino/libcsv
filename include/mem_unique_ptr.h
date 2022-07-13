@@ -6,7 +6,12 @@
 template<class T, class U>
 concept Derived = std::is_base_of<U, T>::value;
 
-template <typename data_t>
+template<class T>
+concept Data_t = (    std::is_object_v<T>
+                   && !std::is_array_v<T> 
+                   && !std::is_pointer_v<T> );
+
+template <Data_t data_t>
 class mem_unique_ptr
 {
   using value_type      = data_t; 
