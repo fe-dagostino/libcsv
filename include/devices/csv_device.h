@@ -106,14 +106,14 @@ public:
   virtual csv_result is_valid() const noexcept = 0;
 
 private:
-  const std::string                      m_sDeviceName;
+  const std::string                     m_sDeviceName;
 
 protected:
   mem_unique_ptr<csv_device_options>    m_ptrOptions;
   mem_unique_ptr<csv_device_events>     m_ptrEvents;
 
   /* stats */
-  csv_dev_stats                          m_devStats;
+  csv_dev_stats                         m_devStats;
 };
 
 } //inline namespace
