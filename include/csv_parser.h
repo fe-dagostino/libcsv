@@ -30,7 +30,7 @@
 
 #include <memory>
 #include <functional>
-#include <map>
+
 
 namespace csv {
 inline namespace LIB_VERSION {
@@ -48,7 +48,7 @@ class csv_parser : public csv_base
 
 protected:
   /***/
-  csv_parser( mem_unique_ptr<csv_device> ptrDevice, mem_unique_ptr<csv_events> ptrEvents );
+  csv_parser( core::mem_unique_ptr<csv_device> ptrDevice, core::mem_unique_ptr<csv_events> ptrEvents );
 
 public:
 

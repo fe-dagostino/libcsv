@@ -35,7 +35,7 @@ class csv_reader : public csv_parser
 {
 public:
   /***/
-  csv_reader( mem_unique_ptr<csv_device> ptrDevice, mem_unique_ptr<csv_events> ptrEvents );
+  csv_reader( core::mem_unique_ptr<csv_device> ptrDevice, core::mem_unique_ptr<csv_events> ptrEvents );
 
   /***/
   bool open();

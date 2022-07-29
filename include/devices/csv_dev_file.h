@@ -103,7 +103,7 @@ public:
   /**
    * @brief csv_dev_file Constructs a csv_dev_file
    */
-  explicit csv_dev_file( mem_unique_ptr<csv_dev_file_options> ptrDeviceOptions, mem_unique_ptr<csv_device_events> ptrEvents = nullptr);
+  explicit csv_dev_file( core::mem_unique_ptr<csv_dev_file_options> ptrDeviceOptions, core::mem_unique_ptr<csv_device_events> ptrEvents = nullptr);
   
   /***/
   virtual ~csv_dev_file();
@@ -115,15 +115,15 @@ public:
    * \return _access        Unable to access specified device.
    * \return _cfg_error     Error appling configuration on specified device.
    */
-  virtual csv_result open() override;
-  virtual csv_result send(const byte* pBuffer, csv_uint_t nBufferLen) override;
+  virtual csv_result open() noexcept override;
+  virtual csv_result send(const byte* pBuffer, csv_uint_t nBufferLen) noexcept override;
   /**
    * \return _rx_error
    * \return _rx_timedout
    */
-  virtual csv_result recv( byte* pBuffer, csv_uint_t& nBufferLen) override;
+  virtual csv_result recv( byte* pBuffer, csv_uint_t& nBufferLen) noexcept override;
   
-  virtual csv_result close() override;
+  virtual csv_result close() noexcept override;
 
   /**
    * \return _ok                In case of success.

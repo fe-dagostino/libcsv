@@ -60,7 +60,7 @@ static std::uint8_t __BOM__[][5] = {
   { 0x04, 0x84, 0x31, 0x95, 0x33 }   // GB-18030
 };
 
-csv_dev_file::csv_dev_file( mem_unique_ptr<csv_dev_file_options> ptrDeviceOptions, mem_unique_ptr<csv_device_events> ptrEvents )
+csv_dev_file::csv_dev_file( core::mem_unique_ptr<csv_dev_file_options> ptrDeviceOptions, core::mem_unique_ptr<csv_device_events> ptrEvents )
     : csv_device( "csv_dev_file", std::move(ptrDeviceOptions), std::move(ptrEvents) ),
       m_pFile(nullptr), m_pRxBuffer(nullptr), m_nCacheSize(0), m_nCursor(0)
 {
@@ -122,7 +122,7 @@ void  csv_dev_file::write_bom() noexcept
   
 }
 
-csv_result csv_dev_file::open()
+csv_result csv_dev_file::open() noexcept
 {
   csv_result  _retVal = csv_result::_ok;
 
@@ -217,7 +217,7 @@ csv_result csv_dev_file::open()
   return _retVal;
 }
 
-csv_result csv_dev_file::send(const byte* pBuffer, csv_uint_t iBufferLen)
+csv_result csv_dev_file::send(const byte* pBuffer, csv_uint_t iBufferLen) noexcept
 {
   // Do not allow call to send() when not in writing mode
   if ( DeviceOption(m_ptrOptions)->get_mode() != csv_dev_file_options::openmode::write )
@@ -254,7 +254,7 @@ csv_result csv_dev_file::send(const byte* pBuffer, csv_uint_t iBufferLen)
   return _retVal;
 }
 
-csv_result csv_dev_file::recv(byte* pBuffer, csv_uint_t& nBufferLen)
+csv_result csv_dev_file::recv(byte* pBuffer, csv_uint_t& nBufferLen) noexcept
 {
   // Do not allow call to recv() when not in reading mode
   if ( DeviceOption(m_ptrOptions)->get_mode() != csv_dev_file_options::openmode::read )
@@ -342,7 +342,7 @@ csv_result csv_dev_file::refresh_cache() noexcept
   return csv_result::_ok;
 }
 
-csv_result csv_dev_file::close()
+csv_result csv_dev_file::close() noexcept
 {
   if ( m_pFile == nullptr )
     return csv_result::_closed;

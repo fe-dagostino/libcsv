@@ -69,14 +69,14 @@ class csv_device
 {
 protected:
   /***/
-  csv_device( const std::string& sDeviceName, mem_unique_ptr<csv_device_options> ptrOptions, mem_unique_ptr<csv_device_events> ptrEvents = nullptr );
+  csv_device( const std::string& sDeviceName, core::mem_unique_ptr<csv_device_options> ptrOptions, core::mem_unique_ptr<csv_device_events> ptrEvents = nullptr );
 
 public:
   /***/
   virtual ~csv_device();
 
   /***/
-  constexpr const mem_unique_ptr<csv_device_options>& get_options() const noexcept
+  constexpr const core::mem_unique_ptr<csv_device_options>& get_options() const noexcept
   { return m_ptrOptions; }
 
   /***/
@@ -109,11 +109,11 @@ private:
   const std::string                     m_sDeviceName;
 
 protected:
-  mem_unique_ptr<csv_device_options>    m_ptrOptions;
-  mem_unique_ptr<csv_device_events>     m_ptrEvents;
+  core::mem_unique_ptr<csv_device_options>    m_ptrOptions;
+  core::mem_unique_ptr<csv_device_events>     m_ptrEvents;
 
   /* stats */
-  csv_dev_stats                         m_devStats;
+  csv_dev_stats                               m_devStats;
 };
 
 } //inline namespace
