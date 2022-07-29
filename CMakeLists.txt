@@ -9,10 +9,35 @@ project( ${libname}
          LANGUAGES CXX C
 )
 
+find_package(Git)
+if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
+# Update submodules as needed
+    option(GIT_SUBMODULE "Update submodules with remote" ON)
+    if(GIT_SUBMODULE)
+        message(STATUS "Submodule update")
+        execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --remote 
+                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                        RESULT_VARIABLE GIT_SUBMOD_RESULT)
+        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+            message(FATAL_ERROR "git submodule update --remote : failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
+        endif()
+    endif()
+endif()
+
+if(NOT EXISTS "${PROJECT_SOURCE_DIR}/submodules/lock-free/CMakeLists.txt")
+    message(FATAL_ERROR "The submodules/lock-free were not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
+endif()
+
+add_subdirectory(submodules/lock-free)
+
+
 configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/include/config.h)
 
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include         )
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include/devices )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/lock-free/include/  )
+
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include                        )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include/devices                )
+
 
 # uncomment to set a default CXX standard for the external tools like clang-tidy and cppcheck
 # and the targets that do not specify a standard.
