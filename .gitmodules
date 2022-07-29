@@ -1,3 +1,4 @@
 [submodule "submodules/lock-free"]
 	path = submodules/lock-free
 	url = https://github.com/fe-dagostino/lock-free.git
+	branch = master
