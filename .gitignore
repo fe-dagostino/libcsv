@@ -39,3 +39,6 @@ build_release
 *.exe
 *.out
 *.app
+
+# Auto config.h
+include/config.h
