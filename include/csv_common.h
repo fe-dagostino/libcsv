@@ -25,7 +25,7 @@
 #define CSV_COMMON_H
 
 #include "config.h"
-#include "mem_unique_ptr.h"
+#include "core/mem_unique_ptr.h"
 
 #include <stdlib.h>
 #include <string>
