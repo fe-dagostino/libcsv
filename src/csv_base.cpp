@@ -36,15 +36,6 @@ csv_base::csv_base( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv
 
 csv_base::~csv_base()
 {
-  if ( dynamic_cast<csv_base*>(m_ptrDevice.get()) ==  this )
-  {
-    m_ptrDevice.release();
-  }
-
-  if ( dynamic_cast<csv_base*>(m_ptrEvents.get()) ==  this )
-  {
-    m_ptrEvents.release();
-  }
 }       
 
 
