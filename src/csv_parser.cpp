@@ -27,7 +27,7 @@
 namespace csv {
 inline namespace LIB_VERSION {
 
-csv_parser::csv_parser( core::mem_unique_ptr<csv_device> ptrDevice, core::mem_unique_ptr<csv_events> ptrEvents )
+csv_parser::csv_parser( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents )
   : csv_base( std::move(ptrDevice), std::move(ptrEvents) ),
     m_eState (Status::eStart),
     m_sWhitespaces("\a\b\t\v\f\r\n"),

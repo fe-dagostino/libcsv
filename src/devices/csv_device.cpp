@@ -26,7 +26,7 @@
 namespace csv {
 inline namespace LIB_VERSION {
 
-csv_device::csv_device( const std::string& sDeviceName, core::mem_unique_ptr<csv_device_options> ptrOptions, core::mem_unique_ptr<csv_device_events> ptrEvents )
+csv_device::csv_device( const std::string& sDeviceName, core::unique_ptr<csv_device_options> ptrOptions, core::unique_ptr<csv_device_events> ptrEvents )
   : m_sDeviceName(sDeviceName), m_ptrOptions( std::move(ptrOptions) ), m_ptrEvents( std::move(ptrEvents) ),
   m_devStats( { 0, 0, 0 } )
 {}

@@ -60,7 +60,7 @@ static std::uint8_t __BOM__[][5] = {
   { 0x04, 0x84, 0x31, 0x95, 0x33 }   // GB-18030
 };
 
-csv_dev_file::csv_dev_file( core::mem_unique_ptr<csv_dev_file_options> ptrDeviceOptions, core::mem_unique_ptr<csv_device_events> ptrEvents )
+csv_dev_file::csv_dev_file( core::unique_ptr<csv_dev_file_options> ptrDeviceOptions, core::unique_ptr<csv_device_events> ptrEvents )
     : csv_device( "csv_dev_file", std::move(ptrDeviceOptions), std::move(ptrEvents) ),
       m_pFile(nullptr), m_pRxBuffer(nullptr), m_nCacheSize(0), m_nCursor(0)
 {

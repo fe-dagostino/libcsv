@@ -40,7 +40,7 @@ class csv_base
 {
 protected:
   /***/
-  csv_base( core::mem_unique_ptr<csv_device> ptrDevice, core::mem_unique_ptr<csv_events> ptrEvents );
+  csv_base( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents );
   /***/
   virtual ~csv_base();
 
@@ -89,11 +89,11 @@ public:
   { return m_cEoL; }
 
 protected:
-  char                              m_cDelimeter;
-  char                              m_cQuote;
-  char                              m_cEoL;
-  core::mem_unique_ptr<csv_device>  m_ptrDevice;
-  core::mem_unique_ptr<csv_events>  m_ptrEvents;
+  char                          m_cDelimeter;
+  char                          m_cQuote;
+  char                          m_cEoL;
+  core::unique_ptr<csv_device>  m_ptrDevice;
+  core::unique_ptr<csv_events>  m_ptrEvents;
 
 };
 

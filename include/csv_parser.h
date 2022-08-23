@@ -48,7 +48,7 @@ class csv_parser : public csv_base
 
 protected:
   /***/
-  csv_parser( core::mem_unique_ptr<csv_device> ptrDevice, core::mem_unique_ptr<csv_events> ptrEvents );
+  csv_parser( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents );
 
 public:
 

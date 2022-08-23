@@ -27,10 +27,10 @@
 namespace csv {
 inline namespace LIB_VERSION {
 
-csv_base::csv_base( core::mem_unique_ptr<csv_device> ptrDevice, core::mem_unique_ptr<csv_events> ptrEvents )
+csv_base::csv_base( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents )
   : m_cDelimeter(','), m_cQuote('\"'), m_cEoL('\n'),
-    m_ptrDevice( std::forward<core::mem_unique_ptr<csv_device>>(ptrDevice) ),
-    m_ptrEvents( std::forward<core::mem_unique_ptr<csv_events>>(ptrEvents) )
+    m_ptrDevice( std::move(ptrDevice) ),
+    m_ptrEvents( std::move(ptrEvents) )
 {
 }
 
