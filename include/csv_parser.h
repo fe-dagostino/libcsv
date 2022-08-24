@@ -58,7 +58,13 @@ class csv_parser : public csv_base
 
 protected:
   /***/
+  csv_parser();
+
+  /***/
   csv_parser( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents );
+
+  /***/
+  using csv_base::init;
 
 public:
 

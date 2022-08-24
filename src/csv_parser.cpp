@@ -27,6 +27,11 @@
 namespace csv {
 inline namespace LIB_VERSION {
 
+csv_parser::csv_parser()
+  : csv_parser( nullptr, nullptr )
+{
+}
+
 csv_parser::csv_parser( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents )
   : csv_base( std::move(ptrDevice), std::move(ptrEvents) ),
     m_eState (Status::eStart),

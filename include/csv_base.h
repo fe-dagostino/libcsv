@@ -43,9 +43,14 @@ class csv_base
 {
 protected:
   /***/
+  csv_base();
+  /***/
   csv_base( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents );
   /***/
   virtual ~csv_base();
+
+  /***/
+  void init( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents );
 
 public:
   /**
