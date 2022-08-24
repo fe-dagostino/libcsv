@@ -36,7 +36,17 @@ namespace csv {
 inline namespace LIB_VERSION {
 
 
-
+/**
+ * @brief csv_parser support [RFC4180](https://datatracker.ietf.org/doc/rfc4180/)
+ *        that de facto is the standard for CSV format, default behaviour can be
+ *        modified changing parsing settings.
+ *        Also comments on a line are supported, but disabled by default since
+ *        RFC4180 do not take in account the presence of any comments inside the 
+ *        csv file. There are different data source, most of them scientific data
+ *        that come with line of comments inside the CVS, tipically such comments
+ *        are identified with a '#' at the start of a new line and the whole line
+ *        is considered to be a comment. 
+ */
 class csv_parser : public csv_base
 {
   enum class Status : uint8_t { 
@@ -60,27 +70,33 @@ public:
    * 
    * @param whitespaces 
    */
-  inline    void               set_whitespaces( const std::string& whitespaces ) noexcept
+  constexpr inline void               set_whitespaces( const std::string& whitespaces ) noexcept
   { m_sWhitespaces = whitespaces; }
   /***/
-  constexpr const std::string& get_whitespaces( ) const noexcept
+  constexpr inline const std::string& get_whitespaces( ) const noexcept
   { return m_sWhitespaces; }
 
   /***/
-  constexpr void               skip_whitespaces( bool bSkip ) noexcept
+  constexpr inline void               skip_whitespaces( bool bSkip ) noexcept
   { m_bSkipWhitespaces = bSkip; }
   /***/
-  constexpr bool               skip_whitespaces() const noexcept
+  constexpr inline bool               skip_whitespaces() const noexcept
   { return m_bSkipWhitespaces; }
 
   /***/
-  constexpr void               trim_all( bool trim_all ) noexcept
+  constexpr inline void               trim_all( bool trim_all ) noexcept
   { m_bTrimAll = trim_all; }
   /***/
-  constexpr bool               trim_all() const noexcept
+  constexpr inline bool               trim_all() const noexcept
   { return m_bTrimAll;   }
-    
-  
+
+  /***/  
+  constexpr inline void               allow_comments( bool bAllowed ) noexcept
+  { m_bAllowComments = bAllowed; }
+  /***/  
+  constexpr inline bool               allow_comments() const noexcept
+  { return m_bAllowComments; }
+
   /**
    * @brief Set the header structure. Each line should match with number of field specified in the header.
    *        Note: in case no header will be specified before a call to parse() method then the first line 
@@ -128,6 +144,7 @@ private:
   std::string                                        m_sWhitespaces;
   bool                                               m_bSkipWhitespaces;
   bool                                               m_bTrimAll;
+  bool                                               m_bAllowComments;
   mutable csv_row                                    m_vHeader;
 
   mutable std::array<byte,to_bytes<32>::KBytes>      m_recvCache;

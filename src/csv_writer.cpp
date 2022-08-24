@@ -40,7 +40,7 @@ bool csv_writer::write( const csv_row& row )
 {
   for ( size_t ndx = 0; ndx < row.size(); ++ndx )
   {
-    auto& field = row.at(ndx);
+    auto& field = row[ndx];
     if ( field.hasquotes() )
       m_ptrDevice->send( reinterpret_cast<const byte*>(&get_quote()), field.data().type_size() );
 

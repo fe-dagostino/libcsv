@@ -28,7 +28,7 @@ namespace csv {
 inline namespace LIB_VERSION {
 
 csv_base::csv_base( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents )
-  : m_cDelimeter(','), m_cQuote('\"'), m_cEoL('\n'),
+  : m_cDelimeter(','), m_cQuote('\"'), m_cEoL('\n'), m_cComment('#'),
     m_ptrDevice( std::move(ptrDevice) ),
     m_ptrEvents( std::move(ptrEvents) )
 {

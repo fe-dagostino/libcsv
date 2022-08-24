@@ -33,6 +33,7 @@ csv_parser::csv_parser( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr
     m_sWhitespaces("\a\b\t\v\f\r\n"),
     m_bSkipWhitespaces(true),
     m_bTrimAll(true),
+    m_bAllowComments(false),
     m_recvCachedBytes( 0 ),
     m_recvCacheCursor( 0 )
 {
@@ -57,6 +58,7 @@ csv_result csv_parser::parse_row( csv_row& row ) const noexcept
 
   bool          _bEoL      = false;
   bool          _bAddField = false;
+  bool          _bSkipLine = false;
   bool          _bQuoted   = false;
 
   m_sData.clear();
@@ -71,15 +73,40 @@ csv_result csv_parser::parse_row( csv_row& row ) const noexcept
       csv_result _result = m_ptrDevice->recv( m_recvCache.data(), m_recvCachedBytes );
       if ( (_result != csv_result::_ok) && (m_recvCachedBytes==0) ) {
         _retVal = _result;
-        if (m_ptrEvents != nullptr) {
-          m_ptrEvents->onError( _result );
+        
+        if (_result != csv_result::_eof) {
+          if (m_ptrEvents != nullptr) {
+            m_ptrEvents->onError( _result );
+          }
         }
+
         break;
       }
       m_recvCacheCursor = 0; 
     }
 
     _ch = static_cast<char>(m_recvCache[m_recvCacheCursor++]);
+
+    // disabled by default, but different scientific data sources contains  
+    // comment starting with '#' character
+    if ( allow_comments() == true ) [[unlikely]]
+    {
+      if (_bSkipLine == true)
+      {
+        // Skip all until eol
+        if (_ch == get_eol()) {
+          _bSkipLine = false;
+        }
+
+        continue;
+      }
+      
+      // A comment cannot be beween fields
+      if ( (_ch == get_comment()) &&  (m_sData.empty() == true)) { 
+        _bSkipLine = true; 
+        continue;
+      }
+    }
 
     if ( _ch == get_delimeter() ) {
       _bAddField = true;
@@ -102,7 +129,7 @@ csv_result csv_parser::parse_row( csv_row& row ) const noexcept
       {
         m_sData.push_back(_ch);
       } 
-    } // else
+    } // end else
 
     if ( _bAddField == true )
     {
@@ -243,8 +270,9 @@ csv_result  csv_parser::parse( csv_row& row ) const noexcept
 
           _bExit = true;
         }
-        else if ( _res == csv_result::_eof )
+        else if ( _res == csv_result::_eof ){
           m_eState = Status::eEnd;
+        }
       }; break;
 
       case Status::eEnd: 
@@ -253,7 +281,6 @@ csv_result  csv_parser::parse( csv_row& row ) const noexcept
         _bExit = true;
 
         if (m_ptrEvents != nullptr) {
-
           m_ptrEvents->onEnd();
         }        
       }; break;
@@ -263,12 +290,10 @@ csv_result  csv_parser::parse( csv_row& row ) const noexcept
     }
 
     /* code */
-  } while ( ( _res == csv_result::_ok ) && (_bExit == false) );
+  } while ( ((_res == csv_result::_ok) || (_res == csv_result::_eof)) && (_bExit == false) );
   
   return _res;
 }
-
-
 
 } //inline namespace
 } // namespace

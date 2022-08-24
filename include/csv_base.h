@@ -35,7 +35,10 @@ namespace csv {
 inline namespace LIB_VERSION {
 
 
-
+/**
+ * @brief 
+ * 
+ */
 class csv_base
 {
 protected:
@@ -88,10 +91,26 @@ public:
   constexpr inline const char& get_eol() const noexcept
   { return m_cEoL; }
 
+  /**
+   * @brief Set line comment marker.
+   *        Default value is '#' at the beginning of the line.
+   */
+  constexpr inline void set_comment( char ch ) noexcept
+  { m_cComment = ch; }
+
+  /**
+   * @brief Get comment marker. 
+   * 
+   * @return the character used to mark start of a comment line.
+   */
+  constexpr inline const char& get_comment() const noexcept
+  { return m_cComment; }
+
 protected:
   char                          m_cDelimeter;
   char                          m_cQuote;
   char                          m_cEoL;
+  char                          m_cComment;
   core::unique_ptr<csv_device>  m_ptrDevice;
   core::unique_ptr<csv_events>  m_ptrEvents;
 

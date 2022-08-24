@@ -22,6 +22,46 @@ void print_duration( tp ts, tp te )
   << (duration.count() * 1000000000) << "ns   " << endl;
 }
 
+class reader_events : public csv_events
+{
+  virtual void onBegin() override
+  {
+    std::cout << "BEGIN PARSING" << std::endl;
+  }
+
+  virtual void onHeaders( const csv_row& header ) override
+  {
+    std::cout << "  HEADER" << std::endl;
+
+    std::cout << "    ";
+    for ( auto& field : header )
+      std::cout << field.data().c_str() << " ";
+    std::cout << std::endl;
+  }
+
+  virtual void onRow    ( const csv_row& header, const csv_row& row ) override
+  {
+    std::cout << "  ROW  header size=" << header.size() << " row size =" << row.size() << std::endl;
+/*
+    std::cout << "    ";
+    for ( auto& field : row )
+      std::cout << field.data().c_str() << " ";
+    std::cout << std::endl;*/
+  }
+
+  virtual void onEnd() override
+  {
+    std::cout << "END PARSING" << std::endl;
+  }
+
+  /***/
+  virtual void onError( csv_result eCode ) override
+  {
+    std::cout << "ERROR CODE [" << (uint32_t)eCode << "]\n";
+  }
+};
+
+
 int main( int argc, char* argv[] )
 {
   if (argc < 2 )
@@ -46,11 +86,12 @@ int main( int argc, char* argv[] )
   unique_ptr<csv_dev_file>         devInput = std::make_unique<csv_dev_file>( std::move(optInput),nullptr);
 
   std::vector<csv_row*>  vect_rows;
-  csv_reader reader( std::move(devInput), nullptr );
+  csv_reader reader( std::move(devInput), new reader_events() );
 
   reader.skip_whitespaces(true);
   reader.set_eol('\n');
   reader.set_quote('\"');
+  reader.allow_comments(true);
   
   csv_row*    row = new csv_row();
 
