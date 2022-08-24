@@ -70,7 +70,7 @@ public:
    * 
    * @param whitespaces 
    */
-  constexpr inline void               set_whitespaces( const std::string& whitespaces ) noexcept
+  inline           void               set_whitespaces( const std::string& whitespaces ) noexcept
   { m_sWhitespaces = whitespaces; }
   /***/
   constexpr inline const std::string& get_whitespaces( ) const noexcept
