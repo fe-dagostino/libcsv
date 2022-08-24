@@ -50,29 +50,29 @@ public:
       typedef std::forward_iterator_tag iterator_category;
       
       /***/
-      constexpr iterator(pointer ptr) 
+      constexpr inline iterator(pointer ptr) 
       : m_ptr(ptr)
       { }
 
       // Prefix ++
-      constexpr iterator& operator++() noexcept
+      constexpr inline iterator& operator++() noexcept
       { m_ptr++; return *this; }
       // Prefix --
-      constexpr iterator& operator--() noexcept
+      constexpr inline iterator& operator--() noexcept
       { m_ptr--; return *this; }
 
       // Postfix ++
-      constexpr iterator  operator++(int) noexcept
+      constexpr inline iterator  operator++(int) noexcept
       { iterator _iter = *this; this->m_ptr++; return _iter; }
       // Postfix --
-      constexpr iterator  operator--(int) noexcept
+      constexpr inline iterator  operator--(int) noexcept
       { iterator _iter = *this; this->m_ptr--; return _iter; }
 
       /***/
-      constexpr reference operator*() noexcept
+      constexpr inline reference operator*() noexcept
       { return *m_ptr; }
       /***/
-      constexpr pointer   operator->() noexcept
+      constexpr inline pointer   operator->() noexcept
       { return m_ptr; }
 
       /***/
@@ -131,7 +131,7 @@ public:
 
 public:
   /***/
-  constexpr csv_data()
+  constexpr inline csv_data()
     : m_pData(nullptr),
       m_nMaxSize(0),
       m_nLength(0)
@@ -141,7 +141,7 @@ public:
    * @brief csv_data copy constructor do not copy exactly the origial object, 
    *        instead it allocate only required memory to 
    */
-  constexpr csv_data( const csv_data& data )
+  constexpr inline csv_data( const csv_data& data )
     : csv_data()
   {
     if ( data.empty() == false )
@@ -152,7 +152,7 @@ public:
     }
   }
 
-  constexpr csv_data( const_pointer buffer, size_type length )
+  constexpr inline csv_data( const_pointer buffer, size_type length )
     : csv_data()
   {
     if ((buffer != nullptr) && (length > 0))
@@ -164,13 +164,13 @@ public:
   }
 
   /***/
-  constexpr csv_data( csv_data&& data ) 
+  constexpr inline csv_data( csv_data&& data ) 
   {
     // Use move assign operator in order
     *this = std::move(data);
   }
 
-  constexpr ~csv_data()
+  constexpr inline ~csv_data()
   { release(); }
 
   /**
@@ -178,7 +178,7 @@ public:
    * 
    * @return sizeof(data_t) 
    */
-  constexpr size_type  type_size() const noexcept
+  constexpr inline size_type  type_size() const noexcept
   { return data_type_size; }
 
   /**
@@ -188,14 +188,14 @@ public:
    * 
    * @return current size in bytes for current length. 
    */
-  constexpr size_type  size() const noexcept
+  constexpr inline size_type  size() const noexcept
   { return (this->length()*data_type_size); }
   /**
    * @brief Retrieve length in terms of items currently in the buffer.
    * 
    * @return current items in the data buffer. 
    */
-  constexpr size_type  length() const noexcept
+  constexpr inline size_type  length() const noexcept
   { return m_nLength; }
 
   /**
@@ -204,7 +204,7 @@ public:
    * 
    * @return max allow data_t for current data buffer. 
    */
-  constexpr size_type  max_size() const noexcept
+  constexpr inline size_type  max_size() const noexcept
   { return m_nMaxSize; }
 
   /**
@@ -214,7 +214,7 @@ public:
    * 
    * @return current size for the allocated buffer. 
    */
-  constexpr size_type capacity() const noexcept
+  constexpr inline size_type capacity() const noexcept
   { return (max_size() * data_type_size); }
 
   /**
@@ -228,7 +228,7 @@ public:
    * size of n. If c is specified, the new elements are initialized as copies 
    * of c, otherwise, they are value-initialized characters (null characters). 
    */
-  constexpr void resize( size_type length ) noexcept
+  constexpr inline void resize( size_type length ) noexcept
   {
     if (length == max_size())
       return;
@@ -262,7 +262,7 @@ public:
    * size of n. If c is specified, the new elements are initialized as copies 
    * of c, otherwise, they are value-initialized characters (null characters). 
    */
-  constexpr void reserve( size_type length ) noexcept
+  constexpr inline void reserve( size_type length ) noexcept
   { resize(length); }
 
   /**
@@ -271,20 +271,20 @@ public:
    *        If you want to release also all internal buffer then call release() 
    *        method instead.
    */
-  constexpr void clear() noexcept
+  constexpr inline void clear() noexcept
   { 
     std::memset( m_pData, '\0', this->capacity() );
     m_nLength = 0; 
   }
 
-  constexpr bool empty() const noexcept
+  constexpr inline bool empty() const noexcept
   { return (length()==0); }
 
 
   /**
    * Append data_t to buffer.
    */
-  constexpr void push_back( const_reference value ) noexcept
+  constexpr inline void push_back( const_reference value ) noexcept
   {
     if (m_nLength+1 >= max_size()) {
       resize( max_size() + chunk_size );
@@ -297,7 +297,7 @@ public:
    *  @brief  Remove the last data_t if the buffer contain at least 
    *          one data_t.
    */
-  constexpr void pop_back() noexcept
+  constexpr inline void pop_back() noexcept
   {
     if( empty() == 0 ){
       std::memset( &m_pData[m_nLength--], '\0', data_type_size );
@@ -310,7 +310,7 @@ public:
    *  This is a pointer to internal data.  It is undefined to modify
    *  the contents through the returned pointer. 
   */
-  constexpr const data_t*  c_str() const
+  constexpr inline const data_t*  c_str() const
   { return data(); }
 
   /**
@@ -319,7 +319,7 @@ public:
    *  This is a pointer to internal data.  It is undefined to modify
    *  the contents through the returned pointer. 
   */
-  constexpr const data_t*  data() const noexcept
+  constexpr inline const data_t*  data() const noexcept
   { return static_cast<const_pointer>(m_pData); }
 
   /**
@@ -328,25 +328,25 @@ public:
    *  This is a pointer to the data_t sequence held by the csv_data.
    *  Modifying the data_t in the sequence is allowed.
   */
-  constexpr data_t*        data() noexcept
+  constexpr inline data_t*        data() noexcept
   { return m_pData; }
 
   /***/
-  constexpr iterator       begin() noexcept
+  constexpr inline iterator       begin() noexcept
   { return iterator( data() ); }
   /***/
-  constexpr iterator       end() noexcept
+  constexpr inline iterator       end() noexcept
   { return iterator( data()+max_size() ); }
 
   /***/
-  constexpr const_iterator begin() const noexcept
+  constexpr inline const_iterator begin() const noexcept
   { return const_iterator( data() ); }
   /***/
-  constexpr const_iterator end() const noexcept
+  constexpr inline const_iterator end() const noexcept
   { return const_iterator( data()+max_size() ); }
 
   /***/
-  constexpr csv_data&       operator=( csv_data&& data ) noexcept
+  constexpr inline csv_data&       operator=( csv_data&& data ) noexcept
   { 
     m_pData         = data.m_pData;
     data.m_pData    = nullptr;
@@ -364,7 +364,7 @@ public:
    * @brief Release all internal memory and reset max_size() and length() 
    *        to ZERO.
    */
-  constexpr void  release() noexcept
+  constexpr inline void  release() noexcept
   {
     if ( m_pData != nullptr )
     {
@@ -376,11 +376,11 @@ public:
   }
 
   /***/
-  constexpr const data_t& operator[]( size_type index ) const noexcept
+  constexpr inline const data_t& operator[]( size_type index ) const noexcept
   { return data()[index]; }
 
   /***/
-  constexpr       data_t& operator[]( size_type index ) noexcept
+  constexpr inline       data_t& operator[]( size_type index ) noexcept
   { return data()[index]; }
 
 private:
