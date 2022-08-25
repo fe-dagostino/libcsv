@@ -310,16 +310,19 @@ public:
    *  This is a pointer to internal data.  It is undefined to modify
    *  the contents through the returned pointer. 
   */
-  constexpr inline const data_t*  c_str() const
+  constexpr inline const_pointer  c_str() const noexcept
   { return data(); }
 
+  /***/
+  constexpr inline operator std::string_view() const noexcept
+  { return data(); }
   /**
    *  @brief  Return const pointer to contents.
    *
    *  This is a pointer to internal data.  It is undefined to modify
    *  the contents through the returned pointer. 
   */
-  constexpr inline const data_t*  data() const noexcept
+  constexpr inline const_pointer  data() const noexcept
   { return static_cast<const_pointer>(m_pData); }
 
   /**
@@ -328,7 +331,7 @@ public:
    *  This is a pointer to the data_t sequence held by the csv_data.
    *  Modifying the data_t in the sequence is allowed.
   */
-  constexpr inline data_t*        data() noexcept
+  constexpr inline pointer        data() noexcept
   { return m_pData; }
 
   /***/
@@ -346,7 +349,7 @@ public:
   { return const_iterator( data()+max_size() ); }
 
   /***/
-  constexpr inline csv_data&       operator=( csv_data&& data ) noexcept
+  constexpr inline csv_data&      operator=( csv_data&& data ) noexcept
   { 
     m_pData         = data.m_pData;
     data.m_pData    = nullptr;
@@ -376,11 +379,11 @@ public:
   }
 
   /***/
-  constexpr inline const data_t& operator[]( size_type index ) const noexcept
+  constexpr inline const_reference operator[]( size_type index ) const noexcept
   { return data()[index]; }
 
   /***/
-  constexpr inline       data_t& operator[]( size_type index ) noexcept
+  constexpr inline       reference operator[]( size_type index ) noexcept
   { return data()[index]; }
 
 private:
@@ -405,6 +408,15 @@ constexpr bool operator!=( const csv_data<data_t,data_size_t,chunk_size>& lhs, c
   // usage of memcmp() give better results than other implementations
   return (lhs.length() != rhs.length()) || (std::memcmp(lhs.data(),rhs.data(),std::min(lhs.size(),rhs.size()))!=0);
 }
+
+template<typename data_t, typename data_size_t, data_size_t chunk_size>
+constexpr bool operator< ( const csv_data<data_t,data_size_t,chunk_size>& lhs, const csv_data<data_t,data_size_t,chunk_size>& rhs)
+{ return (std::strcmp(lhs.data(),rhs.data(),std::min(lhs.size(),rhs.size())) < 0); }
+
+template<typename data_t, typename data_size_t, data_size_t chunk_size>
+constexpr bool operator> ( const csv_data<data_t,data_size_t,chunk_size>& lhs, const csv_data<data_t,data_size_t,chunk_size>& rhs)
+{ return (std::strcmp(lhs.data(),rhs.data(),std::min(lhs.size(),rhs.size())) > 0); }
+
 
 } //inline namespace
 } // namespace
