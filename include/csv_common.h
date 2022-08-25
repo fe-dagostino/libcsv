@@ -65,7 +65,7 @@ enum class csv_result {
   _rx_timedout     = 0x000A,
   _conn_timeout    = 0x000B,
   _bom_mismatch    = 0x000C,
-  _row_items_error = 0x000D,  
+  _row_items_error = 0x000D,    // Number of items in the row do not match the number of expected columns as for header.
 
   _wrong_protocol  = 0x2001,
   _missing_soh,
