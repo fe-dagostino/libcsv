@@ -31,7 +31,7 @@ csv_writer::csv_writer( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr
   : csv_base( std::move(ptrDevice), std::move(ptrEvents) )
 {}
 
-bool csv_writer::open( const csv_row& header ) 
+bool csv_writer::open( const csv_header& header ) 
 {
   return write( header );
 }

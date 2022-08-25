@@ -27,6 +27,7 @@
 #include "csv_base.h"
 #include "csv_field.h"
 #include "csv_data.h"
+#include "csv_header.h"
 
 #include <memory>
 #include <functional>
@@ -120,7 +121,7 @@ public:
    * 
    * @return a const reference to internal header.
    */
-  constexpr const csv_row&     get_header() const noexcept
+  constexpr const csv_header&  get_header() const noexcept
   { return m_vHeader; }
 
 protected:
@@ -151,7 +152,7 @@ private:
   bool                                               m_bSkipWhitespaces;
   bool                                               m_bTrimAll;
   bool                                               m_bAllowComments;
-  mutable csv_row                                    m_vHeader;
+  mutable csv_header                                 m_vHeader;
 
   mutable std::array<byte,to_bytes<32>::KBytes>      m_recvCache;
   mutable std::size_t                                m_recvCachedBytes;

@@ -37,7 +37,7 @@ public:
   csv_writer( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents );
 
   /***/
-  bool open( const csv_row& header );
+  bool open( const csv_header& header );
 
   /***/
   bool write( const csv_row& row );

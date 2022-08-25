@@ -29,24 +29,17 @@ class reader_events : public csv_events
     std::cout << "BEGIN PARSING" << std::endl;
   }
 
-  virtual void onHeaders( const csv_row& header ) override
+  virtual void onHeaders( const csv_header& header ) override
   {
-    std::cout << "  HEADER" << std::endl;
-
-    std::cout << "    ";
-    for ( auto& field : header )
-      std::cout << field.data().c_str() << " ";
-    std::cout << std::endl;
+    std::cout << "  HEADER - columns = " << header.get_row().size() << std::endl;
   }
 
-  virtual void onRow    ( const csv_row& header, const csv_row& row ) override
+  virtual void onRow    ( const csv_header& header, const csv_row& row ) override
   {
-    std::cout << "  ROW  header size=" << header.size() << " row size =" << row.size() << std::endl;
-/*
-    std::cout << "    ";
-    for ( auto& field : row )
-      std::cout << field.data().c_str() << " ";
-    std::cout << std::endl;*/
+    csv_field_t _label_second{{"second column",13},false};
+
+    std::cout << header.get_index( _label_second );
+    std::cout << "  ROW  header size = " << header.get_row().size() << " - row_size = " << row.size() << std::endl;
   }
 
   virtual void onEnd() override

@@ -24,7 +24,7 @@
 #ifndef CSV_EVENTS_H
 #define CSV_EVENTS_H
 
-#include "csv_field.h"
+#include "csv_header.h"
 
 namespace csv {
 inline namespace LIB_VERSION {
@@ -50,12 +50,12 @@ public:
    *        Note: when reading if the header has been specified as external 
    *              then event will not be invoked.
    */
-  virtual void onHeaders( const csv_row& header ) = 0;
+  virtual void onHeaders( const csv_header& header ) = 0;
 
   /**
    * @brief Invoked at each row on r/w operations.
    */
-  virtual void onRow    ( const csv_row& header, const csv_row& row ) = 0;
+  virtual void onRow    ( const csv_header& header, const csv_row& row ) = 0;
 
   /**
    * @brief Invoked when reading/writing operation have been completed.
