@@ -71,7 +71,7 @@ public:
   }
 
   /***/
-  constexpr inline bool empty() const noexcept
+  inline bool empty() const noexcept
   { return m_labels_row.empty(); }
 
   /**
