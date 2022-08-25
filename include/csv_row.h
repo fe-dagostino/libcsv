@@ -21,72 +21,53 @@
  *
  *************************************************************************************************/
 
-#ifndef CSV_FIELD_H
-#define CSV_FIELD_H
+#ifndef CSV_ROW_H
+#define CSV_ROW_H
 
-#include "csv_common.h"
-#include "csv_data.h"
-#include <vector>
-#include <concepts>
-#include <type_traits>
+#include "csv_field.h"
+#include "csv_header.h"
+
 
 namespace csv {
 inline namespace LIB_VERSION {
 
-template<typename T>
-concept String_t = requires (){
-  std::is_object_v<T>;
-};
 
 
-template<String_t string_t>
-class csv_field
+class csv_row : public csv_row_base_t
 {
 public:
-  /***/
-  constexpr inline csv_field( csv_field&& item ) noexcept
-    : m_bHasQuote(item.m_bHasQuote), m_sData(std::move(item.m_sData))
-  { }
+  enum class flags_t : uint32_t {
+    deleted  = 0x00000001,          // mark row as deleted 
 
-  /***/
-  constexpr inline csv_field( string_t&& data, bool quoted ) noexcept
-    : m_bHasQuote(quoted), m_sData(std::move(data))
-  { }
-
-  /***/
-  constexpr inline csv_field( const string_t& data, bool quoted ) noexcept
-    : m_bHasQuote(quoted), m_sData(data)
-  { }
-
-  /***/
-  constexpr inline ~csv_field() noexcept
+  };
+ 
+  csv_row()
+    : m_flags(0)
   {}
+  
+  /***/
+  constexpr inline uint32_t   get_flags() const
+  { return m_flags; }
 
   /***/
-  constexpr inline void             hasquotes( bool quoted ) noexcept
-  { m_bHasQuote = quoted; }
+  constexpr inline bool       test_flag ( flags_t flag ) const
+  { return (m_flags & static_cast<uint32_t>(flag)); }
+
   /***/
-  constexpr inline bool             hasquotes() const noexcept
-  { return m_bHasQuote; }
+  constexpr inline void       set_flag  ( flags_t flag )
+  { m_flags |= static_cast<uint32_t>(flag); }
+
   /***/
-  constexpr inline const string_t&  data() const noexcept
-  { return m_sData; }
-  /***/
-  constexpr inline operator const string_t&() const noexcept
-  { return m_sData; }
+  constexpr inline void       unset_flag( flags_t flag )
+  { m_flags &= ~static_cast<uint32_t>(flag); }
 
 private:
-  bool      m_bHasQuote;  
-  string_t  m_sData;
+  uint32_t      m_flags;
+
 
 };
-
-typedef csv_data<char,size_t>         csv_data_t;
-typedef csv_field<csv_data_t>         csv_field_t;
-typedef std::vector<csv_field_t>      csv_row_base_t;
-
 
 } //inline namespace
 } // namespace
 
-#endif //CSV_FIELD_H
+#endif //CSV_ROW_H

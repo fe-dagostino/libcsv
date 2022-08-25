@@ -31,7 +31,7 @@ class reader_events : public csv_events
 
   virtual void onHeaders( const csv_header& header ) override
   {
-    std::cout << "  HEADER - columns = " << header.get_row().size() << std::endl;
+    std::cout << "  HEADER - columns = " << header.size() << std::endl;
   }
 
   virtual void onRow    ( const csv_header& header, const csv_row& row ) override
@@ -39,7 +39,7 @@ class reader_events : public csv_events
     csv_field_t _label_second{{"second column",13},false};
 
     std::cout << header.get_index( _label_second );
-    std::cout << "  ROW  header size = " << header.get_row().size() << " - row_size = " << row.size() << std::endl;
+    std::cout << "  ROW  header size = " << header.size() << " - row_size = " << row.size() << std::endl;
   }
 
   virtual void onEnd() override

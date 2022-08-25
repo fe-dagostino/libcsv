@@ -45,7 +45,9 @@ csv_parser::csv_parser( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr
 }
 
 bool  csv_parser::set_header( csv_row&& header ) noexcept
-{ return m_vHeader.init( std::move(header) ); }
+{ 
+  return m_vHeader.init( std::move(header) ); 
+}
 
 csv_result csv_parser::parse_row( csv_row& row ) const noexcept
 {
@@ -236,11 +238,12 @@ csv_result  csv_parser::parse( csv_row& row ) const noexcept
     
       case Status::eReadHeader: 
       {
-        csv_row _tmp_row;
+        csv_row  _tmp_row;
         _res = parse_row( _tmp_row );
         if ( _res == csv_result::_ok ){
+          // Initialize header with labels in the first row 
           m_vHeader.init( std::move(_tmp_row) );
-          
+
           // Invoke event interface  
           if (m_ptrEvents != nullptr) {
             m_ptrEvents->onHeaders( m_vHeader );
@@ -261,7 +264,7 @@ csv_result  csv_parser::parse( csv_row& row ) const noexcept
           // Invoke event interface  
           if (m_ptrEvents != nullptr) 
           {
-            if ( row.size() != m_vHeader.get_row().size() )
+            if ( row.size() != m_vHeader.size() )
               m_ptrEvents->onError( csv_result::_row_items_error );
 
             m_ptrEvents->onRow( m_vHeader, row );

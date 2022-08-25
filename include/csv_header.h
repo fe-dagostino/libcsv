@@ -24,7 +24,7 @@
 #ifndef CSV_HEADER_H
 #define CSV_HEADER_H
 
-#include "csv_field.h"
+#include "csv_row.h"
 #include <unordered_map>
 
 
@@ -32,19 +32,15 @@ namespace csv {
 inline namespace LIB_VERSION {
 
 
-class csv_header
+class csv_header : public csv_row
 {
 public:
   using field_index_t   = int32_t;
   using field_map_t     = std::unordered_map<std::string_view,field_index_t>;
 
-  inline csv_header() noexcept
+  /***/
+  csv_header()
   {}
-
-  explicit inline csv_header( csv_row&& labels ) noexcept
-  {
-    init( std::move(labels) );
-  }
 
   /**
    * @brief Initialize the header with specified cvs_row.
@@ -57,22 +53,18 @@ public:
    */
   inline bool init( csv_row&& labels ) noexcept
   {
-    bool  ret = m_labels_row.empty();
+    bool  ret = empty();
 
-    m_labels_row = std::move(labels);
+    static_cast<csv_row&>(*this) = std::move(labels);
     
     m_label_2_index.clear();
-    for ( size_t ndx = 0; ndx < m_labels_row.size(); ++ndx )
+    for ( size_t ndx = 0; ndx < size(); ++ndx )
     {
-      m_label_2_index[ m_labels_row[ndx].data() ] = ndx;  
+      m_label_2_index[ this->at(ndx).data() ] = ndx;  
     }
 
     return ret;
   }
-
-  /***/
-  inline bool empty() const noexcept
-  { return m_labels_row.empty(); }
 
   /**
    * @brief Check if specified label is part of the header.
@@ -112,16 +104,7 @@ public:
   inline field_index_t operator[](const csv_data_t& label)
   { return m_label_2_index[label]; }
 
-  /***/
-  constexpr inline operator const csv_row&() const noexcept
-  { return m_labels_row; }
-
-  /***/
-  constexpr inline const csv_row& get_row() const noexcept
-  { return m_labels_row; }
-
 private:
-  csv_row         m_labels_row;  
   field_map_t     m_label_2_index;
 
 };
