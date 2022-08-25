@@ -55,7 +55,7 @@ public:
    * @return true   if the header was previously initialized.
    * @return false  if the header was empty.
    */
-  constexpr inline bool init( csv_row&& labels ) noexcept
+  inline bool init( csv_row&& labels ) noexcept
   {
     bool  ret = m_labels_row.empty();
 
