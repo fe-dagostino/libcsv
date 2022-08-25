@@ -44,32 +44,35 @@ class csv_field
 {
 public:
   /***/
-  constexpr csv_field( csv_field&& item )
+  constexpr inline csv_field( csv_field&& item ) noexcept
     : m_bHasQuote(item.m_bHasQuote), m_sData(std::move(item.m_sData))
   { }
 
   /***/
-  constexpr csv_field( string_t&& data, bool quoted )
+  constexpr inline csv_field( string_t&& data, bool quoted ) noexcept
     : m_bHasQuote(quoted), m_sData(std::move(data))
   { }
 
   /***/
-  constexpr csv_field( const string_t& data, bool quoted )
+  constexpr inline csv_field( const string_t& data, bool quoted ) noexcept
     : m_bHasQuote(quoted), m_sData(data)
   { }
 
   /***/
-  constexpr ~csv_field()
+  constexpr inline ~csv_field() noexcept
   {}
 
   /***/
-  constexpr void             hasquotes( bool quoted )
+  constexpr inline void             hasquotes( bool quoted ) noexcept
   { m_bHasQuote = quoted; }
   /***/
-  constexpr bool             hasquotes() const
+  constexpr inline bool             hasquotes() const noexcept
   { return m_bHasQuote; }
   /***/
-  constexpr const string_t&  data() const
+  constexpr inline const string_t&  data() const noexcept
+  { return m_sData; }
+  /***/
+  constexpr inline operator const string_t&() const noexcept
   { return m_sData; }
 
 private:
