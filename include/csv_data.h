@@ -151,6 +151,21 @@ public:
       m_nLength  = data.length();
     }
   }
+  
+  /***/
+  constexpr inline csv_data( csv_data&& data ) 
+  {
+    // Use move assign operator in order
+    *this = std::move(data);
+  }
+
+  /**
+   * @brief Construct csv_data from a buffer, assuming 
+   *        that this last is a null-terminated string.
+   */
+  constexpr inline csv_data( const_pointer buffer )
+    : csv_data( buffer, strlen(buffer) )
+  { }
 
   constexpr inline csv_data( const_pointer buffer, size_type length )
     : csv_data()
@@ -163,12 +178,7 @@ public:
     }
   }
 
-  /***/
-  constexpr inline csv_data( csv_data&& data ) 
-  {
-    // Use move assign operator in order
-    *this = std::move(data);
-  }
+
 
   constexpr inline ~csv_data()
   { release(); }
