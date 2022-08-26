@@ -1,3 +1,4 @@
+[![CMake](https://github.com/fe-dagostino/libcsv/actions/workflows/cmake.yml/badge.svg?branch=master)](https://github.com/fe-dagostino/libcsv/actions/workflows/cmake.yml)
 
 ## Table of Contents
 
