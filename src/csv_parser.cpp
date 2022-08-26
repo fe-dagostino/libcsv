@@ -246,7 +246,7 @@ csv_result  csv_parser::parse( csv_row& row ) const noexcept
 
           // Invoke event interface  
           if (m_ptrEvents != nullptr) {
-            m_ptrEvents->onHeaders( m_vHeader );
+            m_ptrEvents->onHeader( m_vHeader );
           }
 
           m_eState = Status::eReadRows;

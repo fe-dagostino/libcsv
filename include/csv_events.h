@@ -50,7 +50,7 @@ public:
    *        Note: when reading if the header has been specified as external 
    *              then event will not be invoked.
    */
-  virtual void onHeaders( const csv_header& header ) = 0;
+  virtual void onHeader ( const csv_header& header ) = 0;
 
   /**
    * @brief Invoked at each row on r/w operations.
