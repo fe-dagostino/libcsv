@@ -72,7 +72,7 @@ public:
    * @return true   if the label is present.
    * @return false  if the label is not present.
    */
-  inline bool          contains( const csv_data_t& label ) noexcept
+  inline bool          contains( const csv_data_t& label ) const noexcept
   { return m_label_2_index.contains(label); }
 
   /**
