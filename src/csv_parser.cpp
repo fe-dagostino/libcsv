@@ -148,7 +148,7 @@ csv_result csv_parser::parse_row( csv_row& row ) const noexcept
       // A temporary object csv_field will be instantiated with
       // m_sData that is subject to copy constructor and then
       // temporary object will be moved inside the container.
-      row.push_back( csv_field( csv_data<char,size_t>(pFirst,length), _bQuoted ) );
+      row.emplace_back( csv_field( csv_data<char,size_t>(pFirst,length), _bQuoted ) );
       
       m_sData.clear();
       _bQuoted = _bAddField = false;
@@ -178,7 +178,7 @@ csv_result csv_parser::parse_row( csv_row& row ) const noexcept
     // A temporary object csv_field will be instantiated with
     // m_sData that is subject to copy constructor and then
     // temporary object will be moved inside the container.
-    row.push_back( csv_field( csv_data<char,size_t>(pFirst,length), _bQuoted ) );    
+    row.emplace_back( csv_field( csv_data<char,size_t>(pFirst,length), _bQuoted ) );    
     
     m_sData.clear();  
   }
@@ -268,6 +268,24 @@ csv_result  csv_parser::parse( csv_row& row ) const noexcept
               m_ptrEvents->onError( csv_result::_row_items_error );
 
             m_ptrEvents->onRow( m_vHeader, row );
+
+            // Check if filters should be applied or not. 
+            // Can be possible to have a filters chain for each field,
+            // where the number of filters is defined at application level.
+            if ( m_filters.empty() == false )
+            {
+              for ( std::size_t ndx = 0; ndx < m_vHeader.size(); ++ndx )
+              {
+                const csv_field_t& label   = m_vHeader.get_field(ndx);
+                if ( m_filters.contains(label.data()) == false )
+                  continue;
+                
+                csv_filters_chain* filters = m_filters.at(label.data()).get();
+                filters->apply( ndx, m_vHeader, row );
+              }
+
+              m_ptrEvents->onFilteredRow( m_vHeader, row );
+            }
           }
 
           _bExit = true;

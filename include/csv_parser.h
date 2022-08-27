@@ -28,6 +28,7 @@
 #include "csv_field.h"
 #include "csv_data.h"
 #include "csv_header.h"
+#include "csv_filters_chain.h"
 
 #include <memory>
 #include <functional>
@@ -35,7 +36,6 @@
 
 namespace csv {
 inline namespace LIB_VERSION {
-
 
 /**
  * @brief csv_parser support [RFC4180](https://datatracker.ietf.org/doc/rfc4180/)
@@ -124,6 +124,38 @@ public:
   constexpr const csv_header&  get_header() const noexcept
   { return m_vHeader; }
 
+  /**
+   * @brief Register a filters chain to be used with a specified colum
+   *        of the csv data set.
+   * 
+   * @param filters    pointer to a csv_filters_chain, if the method return true,
+   *                   ownership of such pointer will be in charge of csv_filters_chain.
+   * @return true      filters_chain has been registered. @fileters pointer will be updated to nullptr.
+   * @return false     a filters_chain with the same label has been previously registered. 
+   */
+  inline bool                  set_filters( csv_filters_chain*& filters ) noexcept
+  {
+    if ( m_filters.contains(filters->label_name())==true)
+      return false;
+
+    m_filters[filters->label_name()] = filters;
+    filters = nullptr;
+
+    return true;
+  }
+
+  /**
+   * @brief Clear all csv_filter_chain and release resources.
+   */
+  inline bool                  has_filters() const
+  { return !m_filters.empty(); }
+
+  /**
+   * @brief Clear all csv_filter_chain and release resources.
+   */
+  inline void                  clear_filters()
+  { m_filters.clear(); }
+
 protected:
   /***/
   csv_result  parse( csv_row& row ) const noexcept;
@@ -147,17 +179,21 @@ private:
   bool        is_quoted( const char* & pFirst, const char* & pLast, size_t& length ) const noexcept;
 
 private:
-  mutable Status                                     m_eState;
-  std::string                                        m_sWhitespaces;
-  bool                                               m_bSkipWhitespaces;
-  bool                                               m_bTrimAll;
-  bool                                               m_bAllowComments;
-  mutable csv_header                                 m_vHeader;
+  using filters_map_t = std::unordered_map<std::string_view,core::unique_ptr<csv_filters_chain>>;
 
-  mutable std::array<byte,to_bytes<32>::KBytes>      m_recvCache;
-  mutable std::size_t                                m_recvCachedBytes;
-  mutable std::size_t                                m_recvCacheCursor;
-  mutable csv_data<char,size_t>                      m_sData;
+  mutable Status                                 m_eState;
+  std::string                                    m_sWhitespaces;
+  bool                                           m_bSkipWhitespaces;
+  bool                                           m_bTrimAll;
+  bool                                           m_bAllowComments;
+  mutable csv_header                             m_vHeader;
+  filters_map_t                                  m_filters;
+
+
+  mutable std::array<byte,to_bytes<32>::KBytes>  m_recvCache;
+  mutable std::size_t                            m_recvCachedBytes;
+  mutable std::size_t                            m_recvCacheCursor;
+  mutable csv_data<char,size_t>                  m_sData;
 };
 
 } //inline namespace
