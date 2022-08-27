@@ -43,27 +43,32 @@ public:
   /**
    * @brief Invoked when reading/writing operation start.
    */
-  virtual void onBegin() = 0;
+  virtual void onBegin       () = 0;
 
   /**
    * @brief Invoked when header will be encountered in in r/w operations.
    *        Note: when reading if the header has been specified as external 
    *              then event will not be invoked.
    */
-  virtual void onHeader ( const csv_header& header ) = 0;
+  virtual void onHeader      ( const csv_header& header ) = 0;
 
   /**
    * @brief Invoked at each row on r/w operations.
    */
-  virtual void onRow    ( const csv_header& header, const csv_row& row ) = 0;
+  virtual void onRow         ( const csv_header& header, const csv_row& row ) = 0;
+
+  /**
+   * @brief Invoked at each row but only if filters are enabled.
+   */
+  virtual void onFilteredRow ( const csv_header& header, const csv_row& row ) = 0;
 
   /**
    * @brief Invoked when reading/writing operation have been completed.
    */
-  virtual void onEnd() = 0;
+  virtual void onEnd         () = 0;
 
   /***/
-  virtual void onError( csv_result eCode ) = 0;
+  virtual void onError       ( csv_result eCode ) = 0;
 
 };
 
