@@ -47,9 +47,8 @@ csv_base::~csv_base()
 {
 }       
 
-void csv_base::init( const std::string& feedname, core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents )
+void csv_base::init( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents )
 {
-  m_sFeedName = feedname;
   m_ptrDevice = std::move(ptrDevice);
   m_ptrEvents = std::move(ptrEvents);
 }

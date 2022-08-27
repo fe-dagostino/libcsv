@@ -50,7 +50,7 @@ protected:
   virtual ~csv_base();
 
   /***/
-  void init( const std::string& feedname, core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents );
+  void init( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents );
 
 public:
   /**
