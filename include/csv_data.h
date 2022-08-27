@@ -144,12 +144,7 @@ public:
   constexpr inline csv_data( const csv_data& data )
     : csv_data()
   {
-    if ( data.empty() == false )
-    {
-      resize( data.length()+1 );
-      memcpy( this->data(), data.data(), data.size() );
-      m_nLength  = data.length();
-    }
+    copy(data);
   }
   
   /***/
@@ -164,22 +159,17 @@ public:
    *        that this last is a null-terminated string.
    */
   constexpr inline csv_data( const_pointer buffer )
-    : csv_data( buffer, strlen(buffer) )
+    : csv_data( buffer, (buffer==nullptr)?0:strlen(buffer) )
   { }
 
+  /***/
   constexpr inline csv_data( const_pointer buffer, size_type length )
     : csv_data()
   {
-    if ((buffer != nullptr) && (length > 0))
-    {
-      resize( length+1 );
-      memcpy( this->data(), buffer, length*data_type_size );
-      m_nLength  = length;
-    }
+    copy(buffer,length);
   }
 
-
-
+  /***/
   constexpr inline ~csv_data()
   { release(); }
 
@@ -359,6 +349,20 @@ public:
   { return const_iterator( data()+max_size() ); }
 
   /***/
+  constexpr inline csv_data&      operator=( const_pointer buffer ) noexcept
+  { 
+    copy(buffer, (buffer==nullptr)?0:strlen(buffer) );
+    return *this; 
+  }
+
+  /***/
+  constexpr inline csv_data&      operator=( const csv_data& data ) noexcept
+  { 
+    copy(data);
+    return *this; 
+  }
+
+  /***/
   constexpr inline csv_data&      operator=( csv_data&& data ) noexcept
   { 
     m_pData         = data.m_pData;
@@ -395,6 +399,34 @@ public:
   /***/
   constexpr inline       reference operator[]( size_type index ) noexcept
   { return data()[index]; }
+private:
+  /***/
+  constexpr inline void copy( const_pointer buffer, size_type length ) noexcept
+  {
+    if ((buffer == nullptr) || (length == 0))
+    {
+      clear();
+      return;
+    }
+
+    resize( length+1 );
+    memcpy( this->data(), buffer, length*data_type_size );
+    m_nLength  = length;
+  }
+
+  /***/
+  constexpr inline void copy( const csv_data& data ) noexcept
+  {
+    if ( data.empty() == true )
+    {
+      clear();
+      return;
+    }
+    
+    resize( data.length()+1 );
+    memcpy( this->data(), data.data(), data.size() );
+    m_nLength  = data.length();
+  }
 
 private:
   pointer      m_pData;
@@ -414,9 +446,12 @@ constexpr bool operator==( const csv_data<data_t,data_size_t,chunk_size>& lhs, c
 template<typename data_t, typename data_size_t, data_size_t chunk_size>
 constexpr bool operator!=( const csv_data<data_t,data_size_t,chunk_size>& lhs, const csv_data<data_t,data_size_t,chunk_size>& rhs)
 {
+  if (lhs.length() != rhs.length())
+    return true;
+
   // Due to optimization at build time performed by compile and due to optimization done by glibc at runtime
   // usage of memcmp() give better results than other implementations
-  return (lhs.length() != rhs.length()) || (std::memcmp(lhs.data(),rhs.data(),std::min(lhs.size(),rhs.size()))!=0);
+  return ((std::memcmp(lhs.data(),rhs.data(),lhs.size()))!=0);
 }
 
 template<typename data_t, typename data_size_t, data_size_t chunk_size>
@@ -427,6 +462,26 @@ template<typename data_t, typename data_size_t, data_size_t chunk_size>
 constexpr bool operator> ( const csv_data<data_t,data_size_t,chunk_size>& lhs, const csv_data<data_t,data_size_t,chunk_size>& rhs)
 { return (std::strcmp(lhs.data(),rhs.data(),std::min(lhs.size(),rhs.size())) > 0); }
 
+template<typename data_t, typename data_size_t, data_size_t chunk_size>
+constexpr bool operator==( const csv_data<data_t,data_size_t,chunk_size>& lhs, const data_t* rhs)
+{
+  if (rhs == nullptr) 
+    return (lhs.length() == 0);
+
+  return (lhs.length() == strlen(rhs)) && (std::memcmp(lhs.data(),rhs,lhs.size())==0);
+}
+
+template<typename data_t, typename data_size_t, data_size_t chunk_size>
+constexpr bool operator!=( const csv_data<data_t,data_size_t,chunk_size>& lhs, const data_t* rhs)
+{
+  if (rhs == nullptr) 
+    return (lhs.length() != 0);
+
+  if (lhs.length() != strlen(rhs))
+    return true;
+
+  return (std::memcmp(lhs.data(),rhs,lhs.size())!=0);
+}
 
 } //inline namespace
 } // namespace
