@@ -45,12 +45,12 @@ public:
   using filters_type   = std::vector<filter_ptr>;
 
   /***/
-  constexpr inline csv_filters_chain( const csv_data_t& field_name )
+  inline csv_filters_chain( const csv_data_t& field_name )
     : m_sFieldName(field_name)
   {}
 
   /***/
-  constexpr inline virtual ~csv_filters_chain()
+  inline virtual ~csv_filters_chain()
   {}
 
   /**
@@ -71,7 +71,7 @@ public:
    * @param filter   unique pointer to filter instance. Ownership will 
    *                 be moved to csv_filter_chain an that instance.
    */
-  constexpr inline void               append( filter_ptr&& filter )
+  inline void                         append( filter_ptr&& filter )
   { m_filters.emplace_back( std::move(filter) ); }
 
   /**
@@ -80,14 +80,14 @@ public:
    * @return true   if empty
    * @return false  if at least one filter is stored.
    */
-  constexpr inline bool               empty()
+  inline bool                         empty()
   { return m_filters.empty(); }
 
   /**
    * @brief Clear all filter and release instances.
    *        After this call a call empty() will return true.
    */
-  constexpr inline void               clear()
+  inline void                         clear()
   { m_filters.clear(); }
 
   /**
