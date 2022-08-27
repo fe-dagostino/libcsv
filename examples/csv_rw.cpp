@@ -2,6 +2,7 @@
 #include "csv_dev_file.h"
 #include "csv_reader.h"
 #include "csv_writer.h"
+#include "csv_filters_chain.h"
 #include <iostream>
 #include <iomanip>    // needed by setprecision
 #include <chrono>
@@ -24,17 +25,20 @@ void print_duration( tp ts, tp te )
 
 class reader_events : public csv_events
 {
+  /***/  
   virtual void onBegin() override
   {
     std::cout << "BEGIN PARSING" << std::endl;
   }
 
-  virtual void onHeader( const csv_header& header ) override
+  /***/
+  virtual void onHeader      ( const csv_header& header ) override
   {
     std::cout << "  HEADER - columns = " << header.size() << std::endl;
   }
 
-  virtual void onRow   ( const csv_header& header, const csv_row& row ) override
+  /***/
+  virtual void onRow         ( const csv_header& header, const csv_row& row ) override
   {
     csv_field_t _label_second{{"second column",13},false};
 
@@ -42,6 +46,22 @@ class reader_events : public csv_events
     std::cout << "  ROW  header size = " << header.size() << " - row_size = " << row.size() << std::endl;
   }
 
+  /***/
+  virtual void onFilteredRow ( const csv_header& header, const csv_row& row ) override
+  {
+    csv_field_t _label_second{{"second column",13},false};
+
+    std::cout << header.get_index( _label_second );
+    std::cout << "  FILTERED ROW  header size = " << header.size() << " - row_size = " << row.size() << std::endl;
+
+    for ( auto& field : row )
+    {
+      std::cout << field.data().c_str() << " ";
+    }
+    std::cout << std::endl;
+  }
+
+  /***/
   virtual void onEnd() override
   {
     std::cout << "END PARSING" << std::endl;
@@ -54,6 +74,37 @@ class reader_events : public csv_events
   }
 };
 
+class replace_bool_filter : public csv_filter_base
+{
+public:
+  virtual bool  filter( [[maybe_unused]] std::size_t index, [[maybe_unused]] const csv_header& header, [[maybe_unused]] csv_row& row )
+  {
+    if ( row[index].data() == "1" )
+    { row[index].data() = "true"; }
+    else
+    if ( row[index].data() == "0" )
+    { row[index].data() = "false"; }
+
+    return true;
+  }
+};
+
+class replace_empty_filter : public csv_filter_base
+{
+public:
+  virtual bool  filter( [[maybe_unused]] std::size_t index, [[maybe_unused]] const csv_header& header, [[maybe_unused]] csv_row& row )
+  {
+    if ( row[index].data().empty() )
+    { row[index].data() = "empty"; }
+    else
+    if ( row[index].data() == "true" )
+    {
+      row[index].data() = "has been replaced";
+    }
+
+    return true;
+  }
+};
 
 int main( int argc, char* argv[] )
 {
@@ -86,6 +137,20 @@ int main( int argc, char* argv[] )
   reader.set_quote('\"');
   reader.allow_comments(true);
   
+  // Create filter chain for the "first column" in ./example/data/test.csv
+  csv_filters_chain*  chain_first = new csv_filters_chain("first column");
+  chain_first->append( new replace_bool_filter()   );
+
+  // Create filter chain for the "second column" in ./example/data/test.csv
+  // note that replace_empty_filter will be called after replace_bool_filter
+  // so that will work on data alredy altered by the first filter.
+  csv_filters_chain*  chain_second = new csv_filters_chain("second column");
+  chain_second->append( new replace_bool_filter()  );
+  chain_second->append( new replace_empty_filter() );
+
+  reader.set_filters( chain_first );
+  reader.set_filters( chain_second );
+
   csv_row*    row = new csv_row();
 
   reader.open();
