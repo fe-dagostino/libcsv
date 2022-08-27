@@ -68,9 +68,14 @@ public:
   /***/
   constexpr inline bool             hasquotes() const noexcept
   { return m_bHasQuote; }
+  
   /***/
   constexpr inline const string_t&  data() const noexcept
   { return m_sData; }
+  /***/
+  constexpr inline string_t&        data() noexcept
+  { return m_sData; }
+
   /***/
   constexpr inline operator const string_t&() const noexcept
   { return m_sData; }
