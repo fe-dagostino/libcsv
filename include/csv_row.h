@@ -61,6 +61,13 @@ public:
   constexpr inline void       unset_flag( flags_t flag )
   { m_flags &= ~static_cast<uint32_t>(flag); }
 
+  /***/
+  inline const csv_field_t&  get_field(std::size_t index) const
+  { return at(index); }
+  /***/
+  inline csv_field_t&        get_field(std::size_t index)
+  { return at(index); }
+
 private:
   uint32_t      m_flags;
 
