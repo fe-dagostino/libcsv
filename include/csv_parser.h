@@ -59,13 +59,10 @@ class csv_parser : public csv_base
 
 protected:
   /***/
-  csv_parser();
+  csv_parser( const std::string& feedname );
 
   /***/
-  csv_parser( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents );
-
-  /***/
-  using csv_base::init;
+  csv_parser( const std::string& feedname, core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents );
 
 public:
 

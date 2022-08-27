@@ -50,6 +50,7 @@ public:
   /**
    * @brief Perform controls and eventually modify field at specified index.
    * 
+   * @param feedname    csv_base::feed_name() 
    * @param index       field index, can be used to address fields in both header and row
    * @param header      headers cotaining lables. 
    * @param row         input/output parameters intended to be updated accordingly with 
@@ -58,7 +59,12 @@ public:
    * @return true       to continue with next filter
    * @return false      to interrupt appling filters.
    */
-  virtual bool  filter( [[maybe_unused]] std::size_t index, [[maybe_unused]] const csv_header& header, [[maybe_unused]] csv_row& row ) = 0;
+  virtual bool  filter( 
+                        [[maybe_unused]] const std::string& feedname, 
+                        [[maybe_unused]] std::size_t        index, 
+                        [[maybe_unused]] const csv_header&  header, 
+                        [[maybe_unused]] csv_row&           row 
+                      ) = 0;
 
 };
 

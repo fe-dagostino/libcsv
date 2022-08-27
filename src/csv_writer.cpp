@@ -27,8 +27,8 @@ namespace csv {
 inline namespace LIB_VERSION {
 
 
-csv_writer::csv_writer( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents )
-  : csv_base( std::move(ptrDevice), std::move(ptrEvents) )
+csv_writer::csv_writer( const std::string& feedname, core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents )
+  : csv_base( feedname, std::move(ptrDevice), std::move(ptrEvents) )
 {}
 
 bool csv_writer::open( const csv_header& header ) 

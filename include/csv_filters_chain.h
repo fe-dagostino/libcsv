@@ -94,16 +94,22 @@ public:
    * @brief Apply all registred filters in sequence, so (N+1) filter will work on data 
    *        already manipulated or just checked by filter (N).
    * 
+   * @param feedname    csv_base::feed_name()
    * @param index       field index, can be used to address fields in both header and row
    * @param header      headers cotaining lables. 
    * @param row         input/output parameters intended to be updated accordingly with 
    *                    filters results.
    */
-  virtual void                        apply( [[maybe_unused]] std::size_t index, [[maybe_unused]] const csv_header& header, [[maybe_unused]] csv_row& row )
+  virtual void                        apply( 
+                                             [[maybe_unused]] const std::string& feedname,
+                                             [[maybe_unused]] std::size_t        index, 
+                                             [[maybe_unused]] const csv_header&  header, 
+                                             [[maybe_unused]] csv_row&           row 
+                                           )
   {
     for ( auto& filter_base : m_filters )
     {
-      if ( filter_base->filter( index, header, row ) == false )
+      if ( filter_base->filter( feedname, index, header, row ) == false )
         break;
     }
   }

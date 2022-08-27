@@ -77,7 +77,12 @@ class reader_events : public csv_events
 class replace_bool_filter : public csv_filter_base
 {
 public:
-  virtual bool  filter( [[maybe_unused]] std::size_t index, [[maybe_unused]] const csv_header& header, [[maybe_unused]] csv_row& row )
+  virtual bool  filter( 
+                         [[maybe_unused]] const std::string& feedname,
+                         [[maybe_unused]] std::size_t        index, 
+                         [[maybe_unused]] const csv_header&  header, 
+                         [[maybe_unused]] csv_row&           row 
+                       )
   {
     if ( row[index].data() == "1" )
     { row[index].data() = "true"; }
@@ -92,7 +97,12 @@ public:
 class replace_empty_filter : public csv_filter_base
 {
 public:
-  virtual bool  filter( [[maybe_unused]] std::size_t index, [[maybe_unused]] const csv_header& header, [[maybe_unused]] csv_row& row )
+  virtual bool  filter( 
+                         [[maybe_unused]] const std::string& feedname,
+                         [[maybe_unused]] std::size_t        index, 
+                         [[maybe_unused]] const csv_header&  header, 
+                         [[maybe_unused]] csv_row&           row 
+                       )
   {
     if ( row[index].data().empty() )
     { row[index].data() = "empty"; }
@@ -130,7 +140,7 @@ int main( int argc, char* argv[] )
   unique_ptr<csv_dev_file>         devInput = std::make_unique<csv_dev_file>( std::move(optInput),nullptr);
 
   std::vector<csv_row*>  vect_rows;
-  csv_reader reader( std::move(devInput), new reader_events() );
+  csv_reader reader( "csv reader", std::move(devInput), new reader_events() );
 
   reader.skip_whitespaces(true);
   reader.set_eol('\n');
@@ -176,7 +186,7 @@ int main( int argc, char* argv[] )
                                                                                       to_bytes<8>::MBytes,
                                                                                       csv_dev_file_options::filetype::UTF_8 );
   unique_ptr<csv_dev_file>         devOutput = std::make_unique<csv_dev_file>( std::move(optOutput),nullptr);
-  csv_writer writer( std::move(devOutput), nullptr );
+  csv_writer writer( "csv writer", std::move(devOutput), nullptr );
 
   writer.open( reader.get_header() );
   for ( auto row: vect_rows )

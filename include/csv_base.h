@@ -43,16 +43,22 @@ class csv_base
 {
 protected:
   /***/
-  csv_base();
+  csv_base( const std::string& feedname );
   /***/
-  csv_base( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents );
+  csv_base( const std::string& feedname, core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents );
   /***/
   virtual ~csv_base();
 
   /***/
-  void init( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents );
+  void init( const std::string& feedname, core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents );
 
 public:
+  /**
+   * @brief Get curent feed name.
+   */
+  constexpr inline const std::string& feed_name() const noexcept
+  { return m_sFeedName; }
+
   /**
    * @brief Set field delimeter.
    *        Default value is comma ','.
@@ -112,6 +118,7 @@ public:
   { return m_cComment; }
 
 protected:
+  std::string                   m_sFeedName;
   char                          m_cDelimeter;
   char                          m_cQuote;
   char                          m_cEoL;

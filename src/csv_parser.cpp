@@ -27,13 +27,13 @@
 namespace csv {
 inline namespace LIB_VERSION {
 
-csv_parser::csv_parser()
-  : csv_parser( nullptr, nullptr )
+csv_parser::csv_parser( const std::string& feedname )
+  : csv_parser( feedname, nullptr, nullptr )
 {
 }
 
-csv_parser::csv_parser( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents )
-  : csv_base( std::move(ptrDevice), std::move(ptrEvents) ),
+csv_parser::csv_parser( const std::string& feedname, core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents )
+  : csv_base( feedname, std::move(ptrDevice), std::move(ptrEvents) ),
     m_eState (Status::eStart),
     m_sWhitespaces("\a\b\t\v\f\r\n"),
     m_bSkipWhitespaces(true),
@@ -281,7 +281,7 @@ csv_result  csv_parser::parse( csv_row& row ) const noexcept
                   continue;
                 
                 csv_filters_chain* filters = m_filters.at(label.data()).get();
-                filters->apply( ndx, m_vHeader, row );
+                filters->apply( feed_name(), ndx, m_vHeader, row );
               }
 
               m_ptrEvents->onFilteredRow( m_vHeader, row );
