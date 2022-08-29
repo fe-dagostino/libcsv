@@ -125,18 +125,18 @@ public:
    * @brief Register a filters chain to be used with a specified colum
    *        of the csv data set.
    * 
-   * @param filters    pointer to a csv_filters_chain, if the method return true,
-   *                   ownership of such pointer will be in charge of csv_filters_chain.
+   * @param filters    csv_filters_chain, if the method return true, ownership will be moved to 
+   *                   the csv_parser, but in case of failure it will be released with all
+   *                   filters in it.
    * @return true      filters_chain has been registered. @fileters pointer will be updated to nullptr.
    * @return false     a filters_chain with the same label has been previously registered. 
    */
-  inline bool                  set_filters( csv_filters_chain*& filters ) noexcept
+  inline bool                  set_filters( core::unique_ptr<csv_filters_chain> filters ) noexcept
   {
     if ( m_filters.contains(filters->label_name())==true)
       return false;
 
-    m_filters[filters->label_name()] = filters;
-    filters = nullptr;
+    m_filters[filters->label_name()] = std::move(filters);
 
     return true;
   }
