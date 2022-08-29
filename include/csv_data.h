@@ -141,14 +141,14 @@ public:
    * @brief csv_data copy constructor do not copy exactly the origial object, 
    *        instead it allocate only required memory to 
    */
-  constexpr inline csv_data( const csv_data& data )
+  constexpr inline explicit csv_data( const csv_data& data )
     : csv_data()
   {
     copy(data);
   }
   
   /***/
-  constexpr inline csv_data( csv_data&& data ) 
+  constexpr inline explicit csv_data( csv_data&& data ) 
   {
     // Use move assign operator in order
     *this = std::move(data);
@@ -158,12 +158,12 @@ public:
    * @brief Construct csv_data from a buffer, assuming 
    *        that this last is a null-terminated string.
    */
-  constexpr inline csv_data( const_pointer buffer )
+  constexpr inline explicit csv_data( const_pointer buffer )
     : csv_data( buffer, (buffer==nullptr)?0:strlen(buffer) )
   { }
 
   /***/
-  constexpr inline csv_data( const_pointer buffer, size_type length )
+  constexpr inline explicit csv_data( const_pointer buffer, size_type length )
     : csv_data()
   {
     copy(buffer,length);

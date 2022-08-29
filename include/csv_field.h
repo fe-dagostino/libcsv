@@ -44,17 +44,17 @@ class csv_field
 {
 public:
   /***/
-  constexpr inline csv_field( csv_field&& item ) noexcept
+  constexpr inline explicit csv_field( csv_field&& item ) noexcept
     : m_bHasQuote(item.m_bHasQuote), m_sData(std::move(item.m_sData))
   { }
 
   /***/
-  constexpr inline csv_field( string_t&& data, bool quoted ) noexcept
+  constexpr inline explicit csv_field( string_t&& data, bool quoted ) noexcept
     : m_bHasQuote(quoted), m_sData(std::move(data))
   { }
 
   /***/
-  constexpr inline csv_field( const string_t& data, bool quoted ) noexcept
+  constexpr inline explicit csv_field( const string_t& data, bool quoted ) noexcept
     : m_bHasQuote(quoted), m_sData(data)
   { }
 

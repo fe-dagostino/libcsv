@@ -40,7 +40,7 @@ class reader_events : public csv_events
   /***/
   virtual void onRow         ( const csv_header& header, const csv_row& row ) override
   {
-    csv_field_t _label_second{{"second column",13},false};
+    csv_field_t _label_second{ csv_data_t("second column"),false};
 
     std::cout << header.get_index( _label_second );
     std::cout << "  ROW  header size = " << header.size() << " - row_size = " << row.size() << std::endl;
@@ -49,7 +49,7 @@ class reader_events : public csv_events
   /***/
   virtual void onFilteredRow ( const csv_header& header, const csv_row& row ) override
   {
-    csv_field_t _label_second{{"second column",13},false};
+    csv_field_t _label_second{ csv_data_t("second column"),false};
 
     std::cout << header.get_index( _label_second );
     std::cout << "  FILTERED ROW  header size = " << header.size() << " - row_size = " << row.size() << std::endl;
@@ -148,13 +148,13 @@ int main( int argc, char* argv[] )
   reader.allow_comments(true);
   
   // Create filter chain for the "first column" in ./example/data/test.csv
-  csv_filters_chain*  chain_first = new csv_filters_chain("first column");
+  csv_filters_chain*  chain_first = new csv_filters_chain( csv_data_t("first column") ) ;
   chain_first->append( new replace_bool_filter()   );
 
   // Create filter chain for the "second column" in ./example/data/test.csv
   // note that replace_empty_filter will be called after replace_bool_filter
   // so that will work on data alredy altered by the first filter.
-  csv_filters_chain*  chain_second = new csv_filters_chain("second column");
+  csv_filters_chain*  chain_second = new csv_filters_chain( csv_data_t("second column") );
   chain_second->append( new replace_bool_filter()  );
   chain_second->append( new replace_empty_filter() );
 
