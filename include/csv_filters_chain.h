@@ -109,7 +109,7 @@ public:
   {
     for ( auto& filter_base : m_filters )
     {
-      if ( filter_base->filter( feedname, index, header, row ) == false )
+      if ( filter_base->filter( feedname, index, header, row ) == BreakChain_t::yes )
         break;
     }
   }

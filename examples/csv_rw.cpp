@@ -77,12 +77,12 @@ class reader_events : public csv_events
 class replace_bool_filter : public csv_filter_base
 {
 public:
-  virtual bool  filter( 
-                         [[maybe_unused]] const std::string& feedname,
-                         [[maybe_unused]] std::size_t        index, 
-                         [[maybe_unused]] const csv_header&  header, 
-                         [[maybe_unused]] csv_row&           row 
-                       )
+  virtual BreakChain_t  filter( 
+                                [[maybe_unused]] const std::string& feedname,
+                                [[maybe_unused]] std::size_t        index, 
+                                [[maybe_unused]] const csv_header&  header, 
+                                [[maybe_unused]] csv_row&           row 
+                              )
   {
     if ( row[index].data() == "1" )
     { row[index].data() = "true"; }
@@ -90,19 +90,19 @@ public:
     if ( row[index].data() == "0" )
     { row[index].data() = "false"; }
 
-    return true;
+    return BreakChain_t::no;
   }
 };
 
 class replace_empty_filter : public csv_filter_base
 {
 public:
-  virtual bool  filter( 
-                         [[maybe_unused]] const std::string& feedname,
-                         [[maybe_unused]] std::size_t        index, 
-                         [[maybe_unused]] const csv_header&  header, 
-                         [[maybe_unused]] csv_row&           row 
-                       )
+  virtual BreakChain_t  filter( 
+                                [[maybe_unused]] const std::string& feedname,
+                                [[maybe_unused]] std::size_t        index, 
+                                [[maybe_unused]] const csv_header&  header, 
+                                [[maybe_unused]] csv_row&           row 
+                              )
   {
     if ( row[index].data().empty() )
     { row[index].data() = "empty"; }
@@ -112,7 +112,7 @@ public:
       row[index].data() = "has been replaced";
     }
 
-    return true;
+    return BreakChain_t::no;
   }
 };
 

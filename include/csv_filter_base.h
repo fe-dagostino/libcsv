@@ -31,6 +31,10 @@
 namespace csv {
 inline namespace LIB_VERSION {
 
+enum class BreakChain_t : char {
+  no  = 0,
+  yes = 1,
+};
 
 /**
  * @brief Base class intended to be extended at appliacation level
@@ -56,15 +60,15 @@ public:
    * @param row         input/output parameters intended to be updated accordingly with 
    *                    filters results.
    * 
-   * @return true       to continue with next filter
-   * @return false      to interrupt appling filters.
+   * @return BreakChain_t::no    to continue with next filter
+   * @return BreakChain_t::yes   to interrupt appling filters.
    */
-  virtual bool  filter( 
-                        [[maybe_unused]] const std::string& feedname, 
-                        [[maybe_unused]] std::size_t        index, 
-                        [[maybe_unused]] const csv_header&  header, 
-                        [[maybe_unused]] csv_row&           row 
-                      ) = 0;
+  virtual BreakChain_t  filter( 
+                                [[maybe_unused]] const std::string& feedname, 
+                                [[maybe_unused]] std::size_t        index, 
+                                [[maybe_unused]] const csv_header&  header, 
+                                [[maybe_unused]] csv_row&           row 
+                              ) = 0;
 
 };
 
