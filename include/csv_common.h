@@ -75,6 +75,8 @@ enum class csv_result {
 
 };
 
+template<typename T>
+using csv_unique_ptr = std::unique_ptr<T>;
 
 
 } //inline namespace
