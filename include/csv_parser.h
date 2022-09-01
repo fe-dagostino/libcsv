@@ -144,22 +144,35 @@ public:
   /**
    * @brief Clear all csv_filter_chain and release resources.
    */
-  inline bool                  has_filters() const
+  inline bool                  has_filters() const noexcept
   { return !m_filters.empty(); }
 
   /**
    * @brief Clear all csv_filter_chain and release resources.
    */
-  inline void                  clear_filters()
+  inline void                  clear_filters() noexcept
   { m_filters.clear(); }
 
 protected:
   /***/
+  csv_result  parse( ) const noexcept;
+  /***/
   csv_result  parse( csv_row& row ) const noexcept;
+  /**
+   * @brief Check if filters should be applied or not. 
+   * 
+   * @param row     input / output paramenter data will be directly modified by filters
+   * @return true   if filters chains have been processed
+   * @return false  if filters chains are empty so not applicable.
+   */
+  bool        apply_filters( csv_row& row ) const noexcept;
 
 private:
   /***/
+  csv_result  parse( csv_row* row ) const noexcept;
+  /***/
   csv_result  parse_row( csv_row& row ) const noexcept;
+
   /**
    * @brief 
    * 

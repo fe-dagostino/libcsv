@@ -36,6 +36,13 @@ bool csv_reader::open()
   return true; 
 }
 
+bool csv_reader::read() const
+{ 
+  csv_result _res = parse();
+
+  return (_res == csv_result::_ok);
+}
+
 bool csv_reader::read( csv_row& row ) const
 {
   csv_result _res = parse( row );

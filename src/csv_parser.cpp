@@ -214,8 +214,34 @@ bool csv_parser::is_quoted( const char* & pFirst, const char* & pLast, size_t& l
   return false;
 }
 
+csv_result  csv_parser::parse( ) const noexcept
+{ return parse(nullptr); }
 
 csv_result  csv_parser::parse( csv_row& row ) const noexcept
+{ return parse(&row); }
+
+bool        csv_parser::apply_filters( csv_row& row ) const noexcept
+{
+  // Check if filters should be applied or not. 
+  // Can be possible to have a filters chain for each field,
+  // where the number of filters is defined at application level.
+  if ( m_filters.empty() == true ) 
+    return false;
+  
+  for ( std::size_t ndx = 0; ndx < m_vHeader.size(); ++ndx )
+  {
+    const csv_field_t& label   = m_vHeader.get_field(ndx);
+    if ( m_filters.contains(label.data()) == false )
+      continue;
+    
+    csv_filters_chain* filters = m_filters.at(label.data()).get();
+    filters->apply( feed_name(), ndx, m_vHeader, row );
+  }
+
+  return true;
+}
+
+csv_result  csv_parser::parse( csv_row* row ) const noexcept
 {
   csv_result    _res   = csv_result::_ok;
   bool          _bExit = false;
@@ -259,32 +285,35 @@ csv_result  csv_parser::parse( csv_row& row ) const noexcept
 
       case Status::eReadRows: 
       {
-        _res = parse_row( row );
-        if ( _res == csv_result::_ok  ){
+        csv_unique_ptr<csv_row> ptrRow = (row==nullptr)?std::make_unique<csv_row>():nullptr;
+        csv_row&                rRow   = (row==nullptr)?(*ptrRow):(*row);
+
+        _res = parse_row( rRow );
+        if ( _res == csv_result::_ok  )
+        {
           // Invoke event interface  
           if (m_ptrEvents != nullptr) 
           {
-            if ( row.size() != m_vHeader.size() )
+            if ( rRow.size() != m_vHeader.size() )
               m_ptrEvents->onError( csv_result::_row_items_error );
 
-            m_ptrEvents->onRow( m_vHeader, row );
-
-            // Check if filters should be applied or not. 
-            // Can be possible to have a filters chain for each field,
-            // where the number of filters is defined at application level.
-            if ( m_filters.empty() == false )
+            ////////////////
+            // providing a buffer as parameter will bypass both event and filters,
+            // so we process onRow() and onFilteredRow() only if @param row is nullptr
+            if ( row == nullptr )
             {
-              for ( std::size_t ndx = 0; ndx < m_vHeader.size(); ++ndx )
-              {
-                const csv_field_t& label   = m_vHeader.get_field(ndx);
-                if ( m_filters.contains(label.data()) == false )
-                  continue;
-                
-                csv_filters_chain* filters = m_filters.at(label.data()).get();
-                filters->apply( feed_name(), ndx, m_vHeader, row );
-              }
+              csv_unique_ptr<csv_row> ptrRetRow = m_ptrEvents->onRow( m_vHeader, std::move(ptrRow) );
 
-              m_ptrEvents->onFilteredRow( m_vHeader, row );
+              if ( ptrRetRow != nullptr )
+              {
+                // Check if filters should be applied or not. 
+                // Can be possible to have a filters chain for each field,
+                // where the number of filters is defined at application level.                
+                if ( apply_filters( *ptrRetRow ) )  
+                {
+                  m_ptrEvents->onFilteredRow( m_vHeader, std::move(ptrRetRow) );
+                }
+              }
             }
           }
 

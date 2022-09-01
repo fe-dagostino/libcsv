@@ -32,29 +32,31 @@ class reader_events : public csv_events
   }
 
   /***/
-  virtual void onHeader      ( const csv_header& header ) override
+  virtual void                    onHeader      ( const csv_header& header ) override
   {
     std::cout << "  HEADER - columns = " << header.size() << std::endl;
   }
 
   /***/
-  virtual void onRow         ( const csv_header& header, const csv_row& row ) override
+  virtual csv_unique_ptr<csv_row> onRow         ( const csv_header& header, csv_unique_ptr<csv_row> row ) override
   {
     csv_field_t _label_second{ csv_data_t("second column"),false};
 
     std::cout << header.get_index( _label_second );
-    std::cout << "  ROW  header size = " << header.size() << " - row_size = " << row.size() << std::endl;
+    std::cout << "  ROW  header size = " << header.size() << " - row_size = " << row->size() << std::endl;
+
+    return row;
   }
 
   /***/
-  virtual void onFilteredRow ( const csv_header& header, const csv_row& row ) override
+  virtual void                    onFilteredRow ( const csv_header& header, csv_unique_ptr<csv_row> row ) override
   {
     csv_field_t _label_second{ csv_data_t("second column"),false};
 
     std::cout << header.get_index( _label_second );
-    std::cout << "  FILTERED ROW  header size = " << header.size() << " - row_size = " << row.size() << std::endl;
+    std::cout << "  FILTERED ROW  header size = " << header.size() << " - row_size = " << row->size() << std::endl;
 
-    for ( auto& field : row )
+    for ( auto& field : (*row) )
     {
       std::cout << field.data().c_str() << " ";
     }
@@ -62,13 +64,13 @@ class reader_events : public csv_events
   }
 
   /***/
-  virtual void onEnd() override
+  virtual void                    onEnd() override
   {
     std::cout << "END PARSING" << std::endl;
   }
 
   /***/
-  virtual void onError( csv_result eCode ) override
+  virtual void                    onError( csv_result eCode ) override
   {
     std::cout << "ERROR CODE [" << (uint32_t)eCode << "]\n";
   }
@@ -116,8 +118,18 @@ public:
   }
 };
 
+#include "devices/csv_dev_ostream.h"
+
 int main( int argc, char* argv[] )
 {
+  /*
+  unique_ptr<csv_dev_ostream_options<char>> _optOutput = std::make_unique<csv_dev_ostream_options<char>>( std::cout );
+  unique_ptr<csv_dev_ostream<char>>         _devOutput = std::make_unique<csv_dev_ostream<char>>( std::move(_optOutput),nullptr);
+
+_devOutput->send( reinterpret_cast<const unsigned char*>("ciao\n"), 5 );
+
+return 0;
+*/
   if (argc < 2 )
   {
     printf( "Usage:                         \n" );
@@ -166,6 +178,14 @@ int main( int argc, char* argv[] )
   reader.open();
   while ( reader.read( *row ) )
   {
+    reader.apply_filters( *row );
+    
+    for ( auto& field : (*row) )
+    {
+      std::cout << (field.data().empty()?"":field.data().c_str()) << " ";
+    }
+    std::cout << std::endl;
+
     vect_rows.push_back( row );
     row = new csv_row();
   }
