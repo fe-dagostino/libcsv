@@ -92,7 +92,16 @@ public:
   virtual csv_result open() = 0;
   /***/
   virtual csv_result send( const byte* pBuffer, csv_uint_t iBufferLen ) = 0;
-  /***/
+  /**
+   * @brief Read data from device and copy it into @param pBuffer for a maximum
+   *        of @param iBufferLen bytes.
+   * 
+   * @param pBuffer      destination buffer.
+   * @param iBufferLen   updated with the amount of bytes that have been copied 
+   *                     into the buffer. If no data have been copied or in 
+   *                     case of error this value will be zero.
+   * @return csv_result  
+   */
   virtual csv_result recv( byte* pBuffer, csv_uint_t& iBufferLen ) = 0;
   /***/
   virtual csv_result close() = 0;
