@@ -46,7 +46,7 @@ struct to_bytes {
   };
 };
 
-enum class csv_result {
+enum class csv_result : uint16_t {
   _ok              = 0x0000,
 
   _not_implemented = 0x0001,
@@ -75,8 +75,15 @@ enum class csv_result {
 
 };
 
+/**
+ * @brief conversion from csv_result to string.
+ */
+std::string  result2string( csv_result res ) noexcept;
+
+
 template<typename T>
 using csv_unique_ptr = std::unique_ptr<T>;
+
 
 
 } //inline namespace
