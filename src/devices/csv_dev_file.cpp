@@ -131,6 +131,20 @@ csv_result csv_dev_file::open() noexcept
 
   m_pFile        = fopen64( DeviceOption(m_ptrOptions)->get_filename().c_str(), 
                           ((DeviceOption(m_ptrOptions)->get_mode()==csv_dev_file_options::openmode::write)?"w":"r") );
+  if ( m_pFile == nullptr  )
+  {
+    release();
+
+    _retVal = csv_result::_access;
+
+    if ( m_ptrEvents != nullptr )
+    {
+      m_ptrEvents->onError( this, _retVal );
+    }
+
+    return _retVal;
+  }
+
   // Note that using an raw pointer instead of a smart pointer increase performances for the cached methods.
   m_pRxBuffer    = nullptr;
   if (DeviceOption(m_ptrOptions)->get_mode()==csv_dev_file_options::openmode::read)
@@ -139,7 +153,7 @@ csv_result csv_dev_file::open() noexcept
   m_nCacheSize   = 0;
   m_nCursor      = 0;
 
-  if ( ( m_pFile == nullptr ) || ((m_pRxBuffer == nullptr) && (DeviceOption(m_ptrOptions)->get_mode()==csv_dev_file_options::openmode::read)) )
+  if ( (m_pRxBuffer == nullptr) && (DeviceOption(m_ptrOptions)->get_mode()==csv_dev_file_options::openmode::read) )
   {
     release();
 
@@ -258,11 +272,17 @@ csv_result csv_dev_file::recv(byte* pBuffer, csv_uint_t& nBufferLen) noexcept
 {
   // Do not allow call to recv() when not in reading mode
   if ( DeviceOption(m_ptrOptions)->get_mode() != csv_dev_file_options::openmode::read )
+  {
+    nBufferLen = 0;
     return csv_result::_wrong_call;
+  }
 
   csv_result  _retVal = open();
   if ( _retVal != csv_result::_ok )
+  {
+    nBufferLen = 0;
     return _retVal;
+  }
 
   csv_uint_t _nWishedBytes  = nBufferLen;
   csv_uint_t _nBufCursor    = 0;
