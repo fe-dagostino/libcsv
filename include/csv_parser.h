@@ -153,6 +153,12 @@ public:
   inline void                  clear_filters() noexcept
   { m_filters.clear(); }
 
+  /**
+   * @brief Retrieve then number of rows read from device.
+   */
+  inline std::size_t           get_rows() const
+  { return m_nRowsCounter; }
+
 protected:
   /***/
   csv_result  parse( ) const noexcept;
@@ -204,6 +210,7 @@ private:
   mutable std::size_t                            m_recvCachedBytes;
   mutable std::size_t                            m_recvCacheCursor;
   mutable csv_data<char,size_t>                  m_sData;
+  mutable std::size_t                            m_nRowsCounter;
 };
 
 } //inline namespace

@@ -40,7 +40,8 @@ csv_parser::csv_parser( const std::string& feedname, core::unique_ptr<csv_device
     m_bTrimAll(true),
     m_bAllowComments(false),
     m_recvCachedBytes( 0 ),
-    m_recvCacheCursor( 0 )
+    m_recvCacheCursor( 0 ),
+    m_nRowsCounter( 0 )
 {
 }
 
@@ -54,10 +55,11 @@ csv_result csv_parser::parse_row( csv_row& row ) const noexcept
   char          _ch{'\0'};
   csv_result    _retVal = csv_result::_ok;
 
-  bool          _bEoL      = false;
-  bool          _bAddField = false;
-  bool          _bSkipLine = false;
-  bool          _bQuoted   = false;
+  bool          _bEoL       = false;
+  bool          _bAddField  = false;
+  bool          _bSkipLine  = false;
+  bool          _bQuoted    = false;
+  bool          _bQuoteOpen = false;
 
   m_sData.clear();
   if ( row.empty() == false  )
@@ -106,13 +108,22 @@ csv_result csv_parser::parse_row( csv_row& row ) const noexcept
       }
     }
 
-    if ( _ch == get_delimeter() ) {
+    if ( (_ch == get_delimeter()) && (_bQuoteOpen == false)) {
       _bAddField = true;
     } else if ( _ch == get_eol() ) {
       _bAddField = true;
       _bEoL = true;
     } else {
-      if ( skip_whitespaces() )
+
+      if (_ch == get_quote())
+      {
+        if ( (m_sData.empty() == true) && (_bQuoteOpen == false) )
+        { _bQuoteOpen = true; }
+        else if ( (m_sData.empty() == false) && (_bQuoteOpen == true) )
+        { _bQuoteOpen = false; }        
+      }
+
+      if ( skip_whitespaces() && (_bQuoteOpen == false) )
       {
         // Note using memchr() instead of get_whitespaces().find_first_of(_ch) != std::string::npos )
         // with a file of 6.8 GB benchmarks show that .find_first_of(_ch) slow down overall result for ~2 seconds.
@@ -151,7 +162,7 @@ csv_result csv_parser::parse_row( csv_row& row ) const noexcept
       row.emplace_back( csv_field( csv_data<char,size_t>(pFirst,length), _bQuoted ) );
       
       m_sData.clear();
-      _bQuoted = _bAddField = false;
+      _bQuoted = _bAddField = _bQuoteOpen = false;
     }
 
   } while (_bEoL==false);
@@ -252,6 +263,8 @@ csv_result  csv_parser::parse( csv_row* row ) const noexcept
     {
       case Status::eStart: 
       {
+        m_nRowsCounter = 0;
+
         if (m_ptrEvents != nullptr) {
           m_ptrEvents->onBegin();
         }
@@ -291,6 +304,8 @@ csv_result  csv_parser::parse( csv_row* row ) const noexcept
         _res = parse_row( rRow );
         if ( _res == csv_result::_ok  )
         {
+          ++m_nRowsCounter;
+
           // Invoke event interface  
           if (m_ptrEvents != nullptr) 
           {
