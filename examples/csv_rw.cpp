@@ -49,7 +49,7 @@ class reader_events : public csv_events
   }
 
   /***/
-  virtual void                    onFilteredRow ( const csv_header& header, csv_unique_ptr<csv_row> row ) override
+  virtual csv_unique_ptr<csv_row> onFilteredRow ( const csv_header& header, csv_unique_ptr<csv_row> row ) override
   {
     csv_field_t _label_second{ csv_data_t("second column"),false};
 
@@ -61,6 +61,8 @@ class reader_events : public csv_events
       std::cout << field.data().c_str() << " ";
     }
     std::cout << std::endl;
+
+    return row;
   }
 
   /***/

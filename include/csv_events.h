@@ -60,7 +60,7 @@ public:
   /**
    * @brief Invoked at each row but only if filters are enabled.
    */
-  virtual void                    onFilteredRow ( const csv_header& header, csv_unique_ptr<csv_row> row ) = 0;
+  virtual csv_unique_ptr<csv_row> onFilteredRow ( const csv_header& header, csv_unique_ptr<csv_row> row ) = 0;
 
   /**
    * @brief Invoked when reading/writing operation have been completed.
