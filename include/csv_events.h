@@ -53,7 +53,10 @@ public:
   virtual void                    onHeader      ( const csv_header& header ) = 0;
 
   /**
-   * @brief Invoked at each row on r/w operations.
+   * @brief   Invoked at each row on r/w operations.
+   * @return  should be the row if not processed by the applicaiton, on return this buffer will
+   *          be processed with filters if any have been registered.
+   *          If we want to interrup processing discarding current row just return nullptr.
    */
   virtual csv_unique_ptr<csv_row> onRow         ( const csv_header& header, csv_unique_ptr<csv_row> row ) = 0;
 
