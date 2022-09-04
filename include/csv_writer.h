@@ -33,19 +33,35 @@ inline namespace LIB_VERSION {
 class csv_writer : public csv_base
 {
 public:
-  /***/
+  /**
+   * @brief Construct a new csv writer object
+   * 
+   * @param feedname   name used to identify the feed.
+   * @param ptrDevice  output device used for writing.
+   * @param ptrEvents  events for callback events and details on each single operation. 
+   *                   This parameter can be nullptr but in such case the application rely only
+   *                   on return values.
+   */
   csv_writer( const std::string& feedname, core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents );
 
-  /***/
-  bool open( const csv_header& header );
+  /**
+   * @brief 
+   * 
+   * @param out_header 
+   * @return true 
+   * @return false 
+   */
+  bool open( const csv_header& out_header );
 
   /***/
-  bool write( const csv_row& row );
+  bool write( const csv_header& header, const csv_row& row );
 
   /***/
   bool close();
 
 private:
+  /***/
+  bool _in_write_field( const csv_field_t& field );
 
 };
 

@@ -28,10 +28,7 @@ namespace csv {
 inline namespace LIB_VERSION {
 
 csv_base::csv_base( const std::string& feedname )
-  : m_sFeedName(feedname),
-    m_cDelimeter(','), m_cQuote('\"'), m_cEoL('\n'), m_cComment('#'),
-    m_ptrDevice( nullptr ),
-    m_ptrEvents( nullptr )
+  : csv_base( feedname, nullptr, nullptr )
 {
 }
 
@@ -39,7 +36,8 @@ csv_base::csv_base( const std::string& feedname, core::unique_ptr<csv_device> pt
   : m_sFeedName(feedname),
     m_cDelimeter(','), m_cQuote('\"'), m_cEoL('\n'), m_cComment('#'),
     m_ptrDevice( std::move(ptrDevice) ),
-    m_ptrEvents( std::move(ptrEvents) )
+    m_ptrEvents( std::move(ptrEvents) ),
+    m_vHeader()
 {
 }
 
@@ -51,6 +49,27 @@ void csv_base::init( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<cs
 {
   m_ptrDevice = std::move(ptrDevice);
   m_ptrEvents = std::move(ptrEvents);
+}
+
+bool csv_base::apply_filters( csv_row& row ) const noexcept
+{
+  // Check if filters should be applied or not. 
+  // Can be possible to have a filters chain for each field,
+  // where the number of filters is defined at application level.
+  if ( m_filters.empty() == true ) 
+    return false;
+  
+  for ( std::size_t ndx = 0; ndx < m_vHeader.size(); ++ndx )
+  {
+    const csv_field_t& label   = m_vHeader.get_field(ndx);
+    if ( m_filters.contains(label.data()) == false )
+      continue;
+    
+    csv_filters_chain* filters = m_filters.at(label.data()).get();
+    filters->apply( feed_name(), ndx, m_vHeader, row );
+  }
+
+  return true;
 }
 
 } //inline namespace

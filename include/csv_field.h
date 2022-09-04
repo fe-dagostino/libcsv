@@ -44,6 +44,10 @@ class csv_field
 {
 public:
   /***/
+  constexpr inline explicit csv_field( const csv_field& item ) noexcept
+    : m_bHasQuote(item.m_bHasQuote), m_sData( item.m_sData )
+  { }
+  /***/
   constexpr inline explicit csv_field( csv_field&& item ) noexcept
     : m_bHasQuote(item.m_bHasQuote), m_sData(std::move(item.m_sData))
   { }

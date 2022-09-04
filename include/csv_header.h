@@ -66,6 +66,21 @@ public:
     return ret;
   }
 
+  inline bool init( const csv_row& labels ) noexcept
+  {
+    bool  ret = empty();
+
+    static_cast<csv_row&>(*this) = labels;
+    
+    m_label_2_index.clear();
+    for ( size_t ndx = 0; ndx < size(); ++ndx )
+    {
+      m_label_2_index[ this->at(ndx).data() ] = ndx;  
+    }
+
+    return ret;
+  }
+
   /**
    * @brief Check if specified label is part of the header.
    * 

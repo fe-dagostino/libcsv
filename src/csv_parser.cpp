@@ -45,12 +45,7 @@ csv_parser::csv_parser( const std::string& feedname, core::unique_ptr<csv_device
 {
 }
 
-bool  csv_parser::set_header( csv_row&& header ) noexcept
-{ 
-  return m_vHeader.init( std::move(header) ); 
-}
-
-csv_result csv_parser::parse_row( csv_row& row ) const noexcept
+csv_result csv_parser::parse_row( csv_row& row ) noexcept
 {
   char          _ch{'\0'};
   csv_result    _retVal = csv_result::_ok;
@@ -225,34 +220,13 @@ bool csv_parser::is_quoted( const char* & pFirst, const char* & pLast, size_t& l
   return false;
 }
 
-csv_result  csv_parser::parse( ) const noexcept
+csv_result  csv_parser::parse( ) noexcept
 { return parse(nullptr); }
 
-csv_result  csv_parser::parse( csv_row& row ) const noexcept
+csv_result  csv_parser::parse( csv_row& row ) noexcept
 { return parse(&row); }
 
-bool        csv_parser::apply_filters( csv_row& row ) const noexcept
-{
-  // Check if filters should be applied or not. 
-  // Can be possible to have a filters chain for each field,
-  // where the number of filters is defined at application level.
-  if ( m_filters.empty() == true ) 
-    return false;
-  
-  for ( std::size_t ndx = 0; ndx < m_vHeader.size(); ++ndx )
-  {
-    const csv_field_t& label   = m_vHeader.get_field(ndx);
-    if ( m_filters.contains(label.data()) == false )
-      continue;
-    
-    csv_filters_chain* filters = m_filters.at(label.data()).get();
-    filters->apply( feed_name(), ndx, m_vHeader, row );
-  }
-
-  return true;
-}
-
-csv_result  csv_parser::parse( csv_row* row ) const noexcept
+csv_result  csv_parser::parse( csv_row* row ) noexcept
 {
   csv_result    _res   = csv_result::_ok;
   bool          _bExit = false;
@@ -281,7 +255,8 @@ csv_result  csv_parser::parse( csv_row* row ) const noexcept
         _res = parse_row( _tmp_row );
         if ( _res == csv_result::_ok ){
           // Initialize header with labels in the first row 
-          m_vHeader.init( std::move(_tmp_row) );
+          set_header( std::move(_tmp_row) );
+          //m_vHeader.init( std::move(_tmp_row) );
 
           // Invoke event interface  
           if (m_ptrEvents != nullptr) {

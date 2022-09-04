@@ -179,7 +179,7 @@ return 0;
   while ( reader.read( *row ) )
   {
     reader.apply_filters( *row );
-    
+
     for ( auto& field : (*row) )
     {
       std::cout << (field.data().empty()?"":field.data().c_str()) << " ";
@@ -209,9 +209,12 @@ return 0;
   csv_writer writer( "csv writer", std::move(devOutput), nullptr );
 
   writer.open( reader.get_header() );
-  for ( auto row: vect_rows )
+  for ( const auto& row : vect_rows )
   {
-    writer.write( *row );
+    // in this specific case destination header matches with source header, but
+    // in general destination header can be different in terms of fields and order in
+    // which such filed are in the csv file.
+    writer.write( reader.get_header(), *row );
   }
   writer.close();
 

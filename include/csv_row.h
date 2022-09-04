@@ -41,36 +41,57 @@ public:
 
   };
  
-  csv_row()
+  csv_row() noexcept
     : m_flags(0)
   {}
   
   /***/
-  constexpr inline uint32_t   get_flags() const
+  constexpr inline uint32_t   get_flags() const noexcept
   { return m_flags; }
 
   /***/
-  constexpr inline bool       test_flag ( flags_t flag ) const
+  constexpr inline bool       test_flag ( flags_t flag ) const noexcept
   { return (m_flags & static_cast<uint32_t>(flag)); }
 
   /***/
-  constexpr inline void       set_flag  ( flags_t flag )
+  constexpr inline void       set_flag  ( flags_t flag ) noexcept
   { m_flags |= static_cast<uint32_t>(flag); }
 
   /***/
-  constexpr inline void       unset_flag( flags_t flag )
+  constexpr inline void       unset_flag( flags_t flag ) noexcept
   { m_flags &= ~static_cast<uint32_t>(flag); }
 
   /***/
-  inline const csv_field_t&  get_field(std::size_t index) const
+  inline const csv_field_t&  get_field(std::size_t index) const noexcept
   { return at(index); }
   /***/
-  inline csv_field_t&        get_field(std::size_t index)
+  inline csv_field_t&        get_field(std::size_t index) noexcept
   { return at(index); }
 
+  /***/
+  inline csv_row& operator=( const csv_row& row ) noexcept 
+  {
+    this->clear();
+
+    m_flags = row.m_flags;
+
+    for ( const auto& item : row )
+    { this->push_back( item ); }
+
+    return *this;
+  }
+
+  /***/
+  inline csv_row& operator=( csv_row&& row ) noexcept 
+  {
+    m_flags = row.m_flags;
+    
+    static_cast<csv_row_base_t&>(*this) = std::move(row);
+    
+    return *this;
+  }
 private:
   uint32_t      m_flags;
-
 
 };
 

@@ -28,6 +28,7 @@
 #include "csv_device.h"
 #include "csv_events.h"
 #include "csv_data.h"
+#include "csv_filters_chain.h"
 
 #include <memory>
 
@@ -63,7 +64,7 @@ public:
    * @brief Set field delimeter.
    *        Default value is comma ','.
    */
-  constexpr inline void set_delimeter( char ch ) noexcept
+  constexpr inline void        set_delimeter( char ch ) noexcept
   { m_cDelimeter = ch; }
   /**
    * @brief Get field delimeter. 
@@ -77,7 +78,7 @@ public:
    * @brief Set quote delimeter.
    *        Default value is '\"'.
    */
-  constexpr inline void set_quote( char ch ) noexcept
+  constexpr inline void        set_quote( char ch ) noexcept
   { m_cQuote = ch; }
   /**
    * @brief Get quote delimeter. 
@@ -91,7 +92,7 @@ public:
    * @brief Set End of Line marker.
    *        Default value is '\n'.
    */
-  constexpr inline void set_eol( char ch ) noexcept
+  constexpr inline void        set_eol( char ch ) noexcept
   { m_cEoL = ch; }
 
   /**
@@ -106,7 +107,7 @@ public:
    * @brief Set line comment marker.
    *        Default value is '#' at the beginning of the line.
    */
-  constexpr inline void set_comment( char ch ) noexcept
+  constexpr inline void        set_comment( char ch ) noexcept
   { m_cComment = ch; }
 
   /**
@@ -117,7 +118,74 @@ public:
   constexpr inline const char& get_comment() const noexcept
   { return m_cComment; }
 
+  /**
+   * @brief Set the header structure. Each line should match with number of field specified in the header.
+   *        Note: in case no header will be specified before a call to parse() method then the first line 
+   *              will be supposed to be the header as default behaviour.
+   * 
+   * @param header specify header to be set. Note if the function return true parameter datas
+   *               will be moved to data memeber, so its content will be empty after the call
+   *               to set_header() return.
+   * @return true  if the header is not already set
+   * @return false if the header is already valorized, in such case parameter will be ignore.
+   */
+  inline bool                  set_header( csv_row&& header ) noexcept
+  { return m_vHeader.init( std::move(header) ); }
+  /* set_header by copy **/
+  inline bool                  set_header( const csv_row& header ) noexcept
+  { return m_vHeader.init( header ); }
+  /**
+   * @brief Get the header. 
+   * 
+   * @return a const reference to internal header.
+   */
+  constexpr const csv_header&  get_header() const noexcept
+  { return m_vHeader; }
+
+  /**
+   * @brief Register a filters chain to be used with a specified colum
+   *        of the csv data set.
+   * 
+   * @param filters    csv_filters_chain, if the method return true, ownership will be moved to 
+   *                   the csv_parser, but in case of failure it will be released with all
+   *                   filters in it.
+   * @return true      filters_chain has been registered. @fileters pointer will be updated to nullptr.
+   * @return false     a filters_chain with the same label has been previously registered. 
+   */
+  inline bool                  set_filters( core::unique_ptr<csv_filters_chain> filters ) noexcept
+  {
+    if ( m_filters.contains(filters->label_name())==true)
+      return false;
+
+    m_filters[filters->label_name()] = std::move(filters);
+
+    return true;
+  }
+
+  /**
+   * @brief Clear all csv_filter_chain and release resources.
+   */
+  inline bool                  has_filters() const noexcept
+  { return !m_filters.empty(); }
+
+  /**
+   * @brief Clear all csv_filter_chain and release resources.
+   */
+  inline void                  clear_filters() noexcept
+  { m_filters.clear(); }
+
+  /**
+   * @brief Check if filters should be applied or not. 
+   * 
+   * @param row     input / output paramenter data will be directly modified by filters
+   * @return true   if filters chains have been processed
+   * @return false  if filters chains are empty so not applicable.
+   */
+  bool                         apply_filters( csv_row& row ) const noexcept;
+
 protected:
+  using filters_map_t = std::unordered_map<std::string_view,core::unique_ptr<csv_filters_chain>>;
+
   std::string                   m_sFeedName;
   char                          m_cDelimeter;
   char                          m_cQuote;
@@ -125,7 +193,8 @@ protected:
   char                          m_cComment;
   core::unique_ptr<csv_device>  m_ptrDevice;
   core::unique_ptr<csv_events>  m_ptrEvents;
-
+  mutable csv_header            m_vHeader;
+  filters_map_t                 m_filters;
 };
 
 } //inline namespace

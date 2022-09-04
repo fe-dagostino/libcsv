@@ -28,11 +28,9 @@
 #include "csv_field.h"
 #include "csv_data.h"
 #include "csv_header.h"
-#include "csv_filters_chain.h"
 
 #include <memory>
 #include <functional>
-
 
 namespace csv {
 inline namespace LIB_VERSION {
@@ -102,58 +100,6 @@ public:
   { return m_bAllowComments; }
 
   /**
-   * @brief Set the header structure. Each line should match with number of field specified in the header.
-   *        Note: in case no header will be specified before a call to parse() method then the first line 
-   *              will be supposed to be the header as default behaviour.
-   * 
-   * @param header specify header to be set. Note if the function return true parameter datas
-   *               will be moved to data memeber, so its content will be empty after the call
-   *               to set_header() return.
-   * @return true  if the header is not already set
-   * @return false if the header is already valorized, in such case parameter will be ignore.
-   */
-  inline bool                  set_header( csv_row&& header ) noexcept;
-  /**
-   * @brief Get the header. 
-   * 
-   * @return a const reference to internal header.
-   */
-  constexpr const csv_header&  get_header() const noexcept
-  { return m_vHeader; }
-
-  /**
-   * @brief Register a filters chain to be used with a specified colum
-   *        of the csv data set.
-   * 
-   * @param filters    csv_filters_chain, if the method return true, ownership will be moved to 
-   *                   the csv_parser, but in case of failure it will be released with all
-   *                   filters in it.
-   * @return true      filters_chain has been registered. @fileters pointer will be updated to nullptr.
-   * @return false     a filters_chain with the same label has been previously registered. 
-   */
-  inline bool                  set_filters( core::unique_ptr<csv_filters_chain> filters ) noexcept
-  {
-    if ( m_filters.contains(filters->label_name())==true)
-      return false;
-
-    m_filters[filters->label_name()] = std::move(filters);
-
-    return true;
-  }
-
-  /**
-   * @brief Clear all csv_filter_chain and release resources.
-   */
-  inline bool                  has_filters() const noexcept
-  { return !m_filters.empty(); }
-
-  /**
-   * @brief Clear all csv_filter_chain and release resources.
-   */
-  inline void                  clear_filters() noexcept
-  { m_filters.clear(); }
-
-  /**
    * @brief Retrieve then number of rows read from device.
    */
   inline std::size_t           get_rows() const
@@ -161,23 +107,15 @@ public:
 
 protected:
   /***/
-  csv_result  parse( ) const noexcept;
+  csv_result  parse( ) noexcept;
   /***/
-  csv_result  parse( csv_row& row ) const noexcept;
-  /**
-   * @brief Check if filters should be applied or not. 
-   * 
-   * @param row     input / output paramenter data will be directly modified by filters
-   * @return true   if filters chains have been processed
-   * @return false  if filters chains are empty so not applicable.
-   */
-  bool        apply_filters( csv_row& row ) const noexcept;
+  csv_result  parse( csv_row& row ) noexcept;
 
 private:
   /***/
-  csv_result  parse( csv_row* row ) const noexcept;
+  csv_result  parse( csv_row* row ) noexcept;
   /***/
-  csv_result  parse_row( csv_row& row ) const noexcept;
+  csv_result  parse_row( csv_row& row ) noexcept;
 
   /**
    * @brief 
@@ -195,22 +133,17 @@ private:
   bool        is_quoted( const char* & pFirst, const char* & pLast, size_t& length ) const noexcept;
 
 private:
-  using filters_map_t = std::unordered_map<std::string_view,core::unique_ptr<csv_filters_chain>>;
+  Status                                 m_eState;
+  std::string                            m_sWhitespaces;
+  bool                                   m_bSkipWhitespaces;
+  bool                                   m_bTrimAll;
+  bool                                   m_bAllowComments;
 
-  mutable Status                                 m_eState;
-  std::string                                    m_sWhitespaces;
-  bool                                           m_bSkipWhitespaces;
-  bool                                           m_bTrimAll;
-  bool                                           m_bAllowComments;
-  mutable csv_header                             m_vHeader;
-  filters_map_t                                  m_filters;
-
-
-  mutable std::array<byte,to_bytes<32>::KBytes>  m_recvCache;
-  mutable std::size_t                            m_recvCachedBytes;
-  mutable std::size_t                            m_recvCacheCursor;
-  mutable csv_data<char,size_t>                  m_sData;
-  mutable std::size_t                            m_nRowsCounter;
+  std::array<byte,to_bytes<32>::KBytes>  m_recvCache;
+  std::size_t                            m_recvCachedBytes;
+  std::size_t                            m_recvCacheCursor;
+  csv_data<char,size_t>                  m_sData;
+  std::size_t                            m_nRowsCounter;
 };
 
 } //inline namespace

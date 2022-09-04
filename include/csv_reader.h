@@ -41,9 +41,9 @@ public:
   bool open();
 
   /***/
-  bool read() const;
+  bool read();
   /***/
-  bool read( csv_row& row ) const;
+  bool read( csv_row& row );
   
   /***/
   using csv_parser::apply_filters;
