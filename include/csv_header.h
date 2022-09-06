@@ -60,7 +60,7 @@ public:
     m_label_2_index.clear();
     for ( size_t ndx = 0; ndx < size(); ++ndx )
     {
-      m_label_2_index[ this->at(ndx).data() ] = ndx;  
+      m_label_2_index[ static_cast<std::string_view>(this->at(ndx).data()) ] = ndx;  
     }
 
     return ret;
@@ -75,7 +75,7 @@ public:
     m_label_2_index.clear();
     for ( size_t ndx = 0; ndx < size(); ++ndx )
     {
-      m_label_2_index[ this->at(ndx).data() ] = ndx;  
+      m_label_2_index[ static_cast<std::string_view>(this->at(ndx).data()) ] = ndx;  
     }
 
     return ret;
@@ -88,7 +88,7 @@ public:
    * @return false  if the label is not present.
    */
   inline bool          contains( const csv_data_t& label ) const noexcept
-  { return m_label_2_index.contains(label); }
+  { return m_label_2_index.contains( static_cast<std::string_view>(label) ); }
 
   /**
    * @brief Get the column index for the specified label.
@@ -100,10 +100,10 @@ public:
    */
   inline field_index_t get_index( const csv_data_t& label ) const noexcept
   { 
-    if (m_label_2_index.contains(label)==false)
+    if (m_label_2_index.contains( static_cast<std::string_view>(label) )==false)
       return -1;
 
-    return m_label_2_index.at(label); 
+    return m_label_2_index.at( static_cast<std::string_view>(label) ); 
   }
 
   /**
@@ -117,7 +117,7 @@ public:
    *       if the caller know that label is part of the header.
    */
   inline field_index_t operator[](const csv_data_t& label)
-  { return m_label_2_index[label]; }
+  { return m_label_2_index[ static_cast<std::string_view>(label) ]; }
 
 private:
   field_map_t     m_label_2_index;

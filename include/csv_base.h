@@ -154,10 +154,10 @@ public:
    */
   inline bool                  set_filters( core::unique_ptr<csv_filters_chain> filters ) noexcept
   {
-    if ( m_filters.contains(filters->label_name())==true)
+    if ( m_filters.contains( static_cast<std::string_view>(filters->label_name()) )==true)
       return false;
 
-    m_filters[filters->label_name()] = std::move(filters);
+    m_filters[ static_cast<std::string_view>(filters->label_name()) ] = std::move(filters);
 
     return true;
   }

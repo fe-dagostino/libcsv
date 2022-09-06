@@ -62,10 +62,10 @@ bool csv_base::apply_filters( csv_row& row, std::size_t row_num ) const noexcept
   for ( std::size_t ndx = 0; ndx < m_vHeader.size(); ++ndx )
   {
     const csv_field_t& label   = m_vHeader.get_field(ndx);
-    if ( m_filters.contains(label.data()) == false )
+    if ( m_filters.contains( static_cast<std::string_view>(label.data()) ) == false )
       continue;
     
-    csv_filters_chain* filters = m_filters.at(label.data()).get();
+    csv_filters_chain* filters = m_filters.at( static_cast<std::string_view>(label.data()) ).get();
     filters->apply( feed_name(), row_num, ndx, m_vHeader, row );
   }
 

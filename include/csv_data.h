@@ -314,8 +314,21 @@ public:
   { return data(); }
 
   /***/
-  constexpr inline operator std::string_view() const noexcept
+  constexpr inline explicit operator std::string_view() const noexcept
   { return data(); }
+
+  /***/
+  constexpr inline explicit operator long() noexcept
+  { return std::stol( m_pData ); }
+
+  /***/
+  constexpr inline explicit operator unsigned long() noexcept
+  { return std::stoul( m_pData ); }
+
+  /***/
+  constexpr inline explicit operator double() noexcept
+  { return std::stod( m_pData ); }
+
   /**
    *  @brief  Return const pointer to contents.
    *
@@ -399,6 +412,7 @@ public:
   /***/
   constexpr inline       reference operator[]( size_type index ) noexcept
   { return data()[index]; }
+
 private:
   /***/
   constexpr inline void copy( const_pointer buffer, size_type length ) noexcept
