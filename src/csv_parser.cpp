@@ -279,8 +279,6 @@ csv_result  csv_parser::parse( csv_row* row ) noexcept
         _res = parse_row( rRow );
         if ( _res == csv_result::_ok  )
         {
-          ++m_nRowsCounter;
-
           // Invoke event interface  
           if (m_ptrEvents != nullptr) 
           {
@@ -299,7 +297,7 @@ csv_result  csv_parser::parse( csv_row* row ) noexcept
                 // Check if filters should be applied or not. 
                 // Can be possible to have a filters chain for each field,
                 // where the number of filters is defined at application level.                
-                if ( apply_filters( *ptrRetRow ) )  
+                if ( apply_filters( *ptrRetRow, get_rows() ) )  
                 {
                   m_ptrEvents->onFilteredRow( m_vHeader, std::move(ptrRetRow) );
                 }
@@ -307,6 +305,7 @@ csv_result  csv_parser::parse( csv_row* row ) noexcept
             }
           }
 
+          ++m_nRowsCounter;
           _bExit = true;
         }
         else if ( _res == csv_result::_eof ){

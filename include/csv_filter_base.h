@@ -54,7 +54,8 @@ public:
   /**
    * @brief Perform controls and eventually modify field at specified index.
    * 
-   * @param feedname    csv_base::feed_name() 
+   * @param feedname    csv_base::feed_name()
+   * @param rownum      current row index. header is excluded from counting. 
    * @param index       field index, can be used to address fields in both header and row
    * @param header      headers cotaining lables. 
    * @param row         input/output parameters intended to be updated accordingly with 
@@ -64,7 +65,8 @@ public:
    * @return BreakChain_t::yes   to interrupt appling filters.
    */
   virtual BreakChain_t  filter( 
-                                [[maybe_unused]] const std::string& feedname, 
+                                [[maybe_unused]] const std::string& feedname,
+                                [[maybe_unused]] std::size_t        rownum, 
                                 [[maybe_unused]] std::size_t        index, 
                                 [[maybe_unused]] const csv_header&  header, 
                                 [[maybe_unused]] csv_row&           row 

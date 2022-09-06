@@ -83,6 +83,7 @@ class replace_bool_filter : public csv_filter_base
 public:
   virtual BreakChain_t  filter( 
                                 [[maybe_unused]] const std::string& feedname,
+                                [[maybe_unused]] std::size_t        rownum,
                                 [[maybe_unused]] std::size_t        index, 
                                 [[maybe_unused]] const csv_header&  header, 
                                 [[maybe_unused]] csv_row&           row 
@@ -103,6 +104,7 @@ class replace_empty_filter : public csv_filter_base
 public:
   virtual BreakChain_t  filter( 
                                 [[maybe_unused]] const std::string& feedname,
+                                [[maybe_unused]] std::size_t        rownum,
                                 [[maybe_unused]] std::size_t        index, 
                                 [[maybe_unused]] const csv_header&  header, 
                                 [[maybe_unused]] csv_row&           row 

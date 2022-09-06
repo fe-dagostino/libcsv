@@ -178,10 +178,13 @@ public:
    * @brief Check if filters should be applied or not. 
    * 
    * @param row     input / output paramenter data will be directly modified by filters
+   * @param row_num specify current row number. This information will be provided to each filter
+   *                in order to have more precise information. Default value is 0 since we may do
+   *                not have this information.
    * @return true   if filters chains have been processed
    * @return false  if filters chains are empty so not applicable.
    */
-  bool                         apply_filters( csv_row& row ) const noexcept;
+  bool                         apply_filters( csv_row& row, std::size_t row_num = 0 ) const noexcept;
 
 protected:
   using filters_map_t = std::unordered_map<std::string_view,core::unique_ptr<csv_filters_chain>>;

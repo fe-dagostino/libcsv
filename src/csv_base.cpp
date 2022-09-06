@@ -51,7 +51,7 @@ void csv_base::init( core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<cs
   m_ptrEvents = std::move(ptrEvents);
 }
 
-bool csv_base::apply_filters( csv_row& row ) const noexcept
+bool csv_base::apply_filters( csv_row& row, std::size_t row_num ) const noexcept
 {
   // Check if filters should be applied or not. 
   // Can be possible to have a filters chain for each field,
@@ -66,7 +66,7 @@ bool csv_base::apply_filters( csv_row& row ) const noexcept
       continue;
     
     csv_filters_chain* filters = m_filters.at(label.data()).get();
-    filters->apply( feed_name(), ndx, m_vHeader, row );
+    filters->apply( feed_name(), row_num, ndx, m_vHeader, row );
   }
 
   return true;
