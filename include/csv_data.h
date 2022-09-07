@@ -316,15 +316,15 @@ public:
 
   /***/
   constexpr inline long           to_long() const noexcept
-  { return const_cast<long>(data()); }
+  { return std::stol( m_pData ); }
 
   /***/
   constexpr inline unsigned long  to_ulong() const noexcept
-  { return const_cast<unsigned long>(data()); }
+  { return std::stoul( m_pData ); }
 
   /***/
   constexpr inline double         to_double() const noexcept
-  { return const_cast<double>(data()); }
+  { return std::stod( m_pData ); }
 
   /***/
   constexpr inline explicit operator std::string_view() const noexcept
