@@ -313,6 +313,19 @@ public:
   constexpr inline const_pointer  c_str() const noexcept
   { return data(); }
 
+
+  /***/
+  constexpr inline long           to_long() const noexcept
+  { return const_cast<long>(data()); }
+
+  /***/
+  constexpr inline unsigned long  to_ulong() const noexcept
+  { return const_cast<unsigned long>(data()); }
+
+  /***/
+  constexpr inline double         to_double() const noexcept
+  { return const_cast<double>(data()); }
+
   /***/
   constexpr inline explicit operator std::string_view() const noexcept
   { return data(); }
