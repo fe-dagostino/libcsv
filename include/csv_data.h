@@ -510,6 +510,14 @@ constexpr bool operator!=( const csv_data<data_t,data_size_t,chunk_size>& lhs, c
   return (std::memcmp(lhs.data(),rhs,lhs.size())!=0);
 }
 
+template<typename data_t, typename data_size_t, data_size_t chunk_size>
+constexpr bool operator< ( const csv_data<data_t,data_size_t,chunk_size>& lhs, const data_t* rhs)
+{ return (std::strcmp(lhs.data(),rhs,std::min(lhs.size(),std::strlen(rhs))) < 0); }
+
+template<typename data_t, typename data_size_t, data_size_t chunk_size>
+constexpr bool operator> ( const csv_data<data_t,data_size_t,chunk_size>& lhs, const data_t* rhs)
+{ return (std::strcmp(lhs.data(),rhs,std::min(lhs.size(),std::strlen(rhs))) > 0); }
+
 } //inline namespace
 } // namespace
 
