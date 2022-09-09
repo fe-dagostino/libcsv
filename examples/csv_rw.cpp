@@ -126,14 +126,6 @@ public:
 
 int main( int argc, char* argv[] )
 {
-  /*
-  unique_ptr<csv_dev_ostream_options<char>> _optOutput = std::make_unique<csv_dev_ostream_options<char>>( std::cout );
-  unique_ptr<csv_dev_ostream<char>>         _devOutput = std::make_unique<csv_dev_ostream<char>>( std::move(_optOutput),nullptr);
-
-_devOutput->send( reinterpret_cast<const unsigned char*>("ciao\n"), 5 );
-
-return 0;
-*/
   if (argc < 2 )
   {
     printf( "Usage:                         \n" );
