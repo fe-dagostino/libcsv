@@ -41,10 +41,21 @@ public:
 
   };
  
+  /***/
   csv_row() noexcept
     : m_flags(0)
   {}
-  
+
+  /***/
+  csv_row( const csv_row_base_t& row ) noexcept
+    : csv_row_base_t(row), m_flags(0)
+  {}
+
+  /***/
+  csv_row( csv_row_base_t&& row ) noexcept
+    : csv_row_base_t(std::move(row)), m_flags(0)
+  {}
+
   /***/
   constexpr inline uint32_t   get_flags() const noexcept
   { return m_flags; }
