@@ -67,11 +67,11 @@ endif()
 
 
 if( CMAKE_BUILD_TYPE STREQUAL "Debug" )
-  set(  LIB_VERSION_SO        -${CMAKE_PROJECT_VERSION}-debug          )
-  set(  LIB_VERSION_A         -${CMAKE_PROJECT_VERSION}-static-debug   )
+  set(  LIB_VERSION_SO        -${PROJECT_VERSION}-debug          )
+  set(  LIB_VERSION_A         -${PROJECT_VERSION}-static-debug   )
 else()
-  set(  LIB_VERSION_SO        -${CMAKE_PROJECT_VERSION}                )
-  set(  LIB_VERSION_A         -${CMAKE_PROJECT_VERSION}-static         )
+  set(  LIB_VERSION_SO        -${PROJECT_VERSION}                )
+  set(  LIB_VERSION_A         -${PROJECT_VERSION}-static         )
 endif()
 
 set(  LIB_BINARY_DIR 
