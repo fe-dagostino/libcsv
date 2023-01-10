@@ -60,6 +60,9 @@ csv_result csv_parser::parse_row( csv_row& row ) noexcept
   if ( row.empty() == false  )
     row.clear();
 
+  if ( get_header().size() != 0 )
+    row.reserve(get_header().size());
+
   do
   {
     if ( m_recvCacheCursor == m_recvCachedBytes )
