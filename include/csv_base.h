@@ -143,12 +143,12 @@ public:
   { return m_vHeader; }
 
   /***/
-  bool                         append_field( const csv_field_t& label, bool quoted, const csv_field_t& defvalue ) noexcept
+  bool                         append_field( const csv_field_t& label, const csv_field_t& defvalue ) noexcept
   {
     if ( m_vHeader.contains( label ) == true )
       return false;
 
-    m_vHeader.append_label( csv_field_t( label, quoted ) );
+    m_vHeader.append_label( label );
 
     if (m_ptrEvents)
     {
