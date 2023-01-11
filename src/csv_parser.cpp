@@ -279,6 +279,7 @@ csv_result  csv_parser::parse( csv_row* row ) noexcept
         csv_unique_ptr<csv_row> ptrRow = (row==nullptr)?std::make_unique<csv_row>():nullptr;
         csv_row&                rRow   = (row==nullptr)?(*ptrRow):(*row);
 
+        
         _res = parse_row( rRow );
         if ( _res == csv_result::_ok  )
         {
