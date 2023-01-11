@@ -57,11 +57,7 @@ public:
 
     static_cast<csv_row&>(*this) = std::move(labels);
     
-    m_label_2_index.clear();
-    for ( size_t ndx = 0; ndx < size(); ++ndx )
-    {
-      m_label_2_index[ static_cast<std::string_view>(this->at(ndx).data()) ] = ndx;  
-    }
+    _update_lbl2ndx_map();
 
     return ret;
   }
@@ -72,11 +68,7 @@ public:
 
     static_cast<csv_row&>(*this) = labels;
     
-    m_label_2_index.clear();
-    for ( size_t ndx = 0; ndx < size(); ++ndx )
-    {
-      m_label_2_index[ static_cast<std::string_view>(this->at(ndx).data()) ] = ndx;  
-    }
+    _update_lbl2ndx_map();
 
     return ret;
   }
@@ -89,6 +81,21 @@ public:
    */
   inline bool          contains( const csv_data_t& label ) const noexcept
   { return m_label_2_index.contains( static_cast<std::string_view>(label) ); }
+
+  /**
+   * @brief Append a new label to the header and updated internal indexing.
+   *        There is no control related to duplicates, so use contains() 
+   *        in case. 
+   * 
+   * @param label  new label to be appended at the end of the header.
+   */
+  inline void          append_label( const csv_field_t& label ) noexcept
+  {
+    this->push_back( label );
+    this->shrink_to_fit();
+
+    _update_lbl2ndx_map();
+  }
 
   /**
    * @brief Get the column index for the specified label.
@@ -119,6 +126,16 @@ public:
   inline field_index_t operator[](const csv_data_t& label)
   { return m_label_2_index[ static_cast<std::string_view>(label) ]; }
 
+private:
+  /***/
+  inline void _update_lbl2ndx_map() noexcept
+  {
+    m_label_2_index.clear();
+    for ( size_t ndx = 0; ndx < size(); ++ndx )
+    {
+      m_label_2_index[ static_cast<std::string_view>(this->at(ndx).data()) ] = ndx;  
+    }
+  }
 private:
   field_map_t     m_label_2_index;
 

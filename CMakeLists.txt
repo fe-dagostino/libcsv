@@ -4,7 +4,7 @@ set(libname "csv")
 
 # Set the project name and language
 project( ${libname}
-         VERSION 1.0.0
+         VERSION 1.2.0
          DESCRIPTION "CSV parser."
          LANGUAGES CXX C
 )

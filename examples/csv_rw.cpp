@@ -76,6 +76,16 @@ class reader_events : public csv_events
   {
     std::cout << "ERROR CODE [" << (uint32_t)eCode << "]\n";
   }
+
+  /***/
+  virtual bool                    onAppendField ( const csv_header& header, const csv_field_t& label, const csv_field_t& defvalue ) override
+  {
+    (void)header;
+    (void)label;
+    (void)defvalue;
+    
+    return true;
+  }
 };
 
 class replace_bool_filter : public csv_filter_base

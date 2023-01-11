@@ -73,6 +73,11 @@ public:
   /***/
   virtual void                    onError       ( csv_result eCode ) = 0;
 
+  /**
+   * @brief Invoked from append_field() method.  
+   */
+  virtual bool                    onAppendField ( const csv_header& header, const csv_field_t& label, const csv_field_t& defvalue ) = 0;
+
 };
 
 } //inline namespace

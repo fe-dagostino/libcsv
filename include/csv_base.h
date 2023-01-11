@@ -142,6 +142,22 @@ public:
   constexpr const csv_header&  get_header() const noexcept
   { return m_vHeader; }
 
+  /***/
+  bool                         append_field( const csv_field_t& label, bool quoted, const csv_field_t& defvalue ) noexcept
+  {
+    if ( m_vHeader.contains( label ) == true )
+      return false;
+
+    m_vHeader.append_label( csv_field_t( label, quoted ) );
+
+    if (m_ptrEvents)
+    {
+      return m_ptrEvents->onAppendField( m_vHeader, label, defvalue);
+    }
+
+    return true;
+  }
+
   /**
    * @brief Register a filters chain to be used with a specified colum
    *        of the csv data set.
