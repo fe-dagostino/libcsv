@@ -69,7 +69,7 @@ class csv_device
 {
 protected:
   /***/
-  csv_device( const std::string& sDeviceName, core::unique_ptr<csv_device_options> ptrOptions, core::unique_ptr<csv_device_events> ptrEvents = nullptr )
+  csv_device( const std::string& sDeviceName, std::unique_ptr<csv_device_options> ptrOptions, core::unique_ptr<csv_device_events> ptrEvents = nullptr )
     : m_sDeviceName(sDeviceName), m_ptrOptions( std::move(ptrOptions) ), m_ptrEvents( std::move(ptrEvents) ),
       m_devStats( { 0, 0, 0 } )
   {}
@@ -80,15 +80,15 @@ public:
   {}
 
   /***/
-  constexpr const core::unique_ptr<csv_device_options>& get_options() const noexcept
-  { return m_ptrOptions; }
+  constexpr const csv_device_options* get_options() const noexcept
+  { return m_ptrOptions.get(); }
 
   /***/
-  virtual const std::string& getDeviceName() const noexcept
+  virtual const std::string&          get_device_name() const noexcept
   { return m_sDeviceName; }
 
   /***/
-  virtual void               get_stats( csv_dev_stats& stats ) const noexcept
+  virtual void                        get_stats( csv_dev_stats& stats ) const noexcept
   { stats = m_devStats; }
 
 
@@ -122,11 +122,11 @@ private:
   const std::string                     m_sDeviceName;
 
 protected:
-  core::unique_ptr<csv_device_options>    m_ptrOptions;
-  core::unique_ptr<csv_device_events>     m_ptrEvents;
+  std::unique_ptr<csv_device_options>   m_ptrOptions;
+  core::unique_ptr<csv_device_events>   m_ptrEvents;
 
   /* stats */
-  csv_dev_stats                               m_devStats;
+  csv_dev_stats                         m_devStats;
 };
 
 } //inline namespace
