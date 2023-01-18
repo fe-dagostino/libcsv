@@ -24,6 +24,7 @@
 #ifndef CSV_FILTER_CHAIN_H
 #define CSV_FILTER_CHAIN_H
 
+#include "csv_common.h"
 #include "csv_filter_base.h"
 #include <map>
 

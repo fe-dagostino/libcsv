@@ -24,9 +24,9 @@
 #ifndef CSV_HEADER_H
 #define CSV_HEADER_H
 
+#include "csv_common.h"
 #include "csv_row.h"
 #include <unordered_map>
-
 
 namespace csv {
 inline namespace CSV_LIB_VERSION {

@@ -24,6 +24,7 @@
 #ifndef CSV_EVENTS_H
 #define CSV_EVENTS_H
 
+#include "csv_common.h"
 #include "csv_header.h"
 
 namespace csv {

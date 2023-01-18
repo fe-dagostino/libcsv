@@ -24,6 +24,7 @@
 #ifndef CSV_WRITER_H
 #define CSV_WRITER_H
 
+#include "csv_common.h"
 #include "csv_base.h"
 
 namespace csv {

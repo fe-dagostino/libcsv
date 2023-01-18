@@ -24,6 +24,7 @@
 #ifndef CSV_PARSER_H
 #define CSV_PARSER_H
 
+#include "csv_common.h"
 #include "csv_base.h"
 #include "csv_field.h"
 #include "csv_data.h"

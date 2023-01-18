@@ -24,6 +24,7 @@
 #ifndef CSV_BASE_H
 #define CSV_BASE_H
 
+#include "csv_common.h"
 #include "csv_field.h"
 #include "csv_device.h"
 #include "csv_events.h"

@@ -24,6 +24,7 @@
 #ifndef CSV_DEV_OSTREAM_H
 #define CSV_DEV_OSTREAM_H
 
+#include "csv_common.h"
 #include "csv_device.h"
 #include <iostream>
 #include <assert.h>

@@ -24,9 +24,9 @@
 #ifndef CSV_ROW_H
 #define CSV_ROW_H
 
+#include "csv_common.h"
 #include "csv_field.h"
 #include "csv_header.h"
-
 
 namespace csv {
 inline namespace CSV_LIB_VERSION {
