@@ -28,7 +28,7 @@
 #include <cstring>
 
 namespace csv {
-inline namespace LIB_VERSION {
+inline namespace CSV_LIB_VERSION {
 
 
 template<typename data_t, typename data_size_t, data_size_t chunk_size = to_bytes<128>::Bytes>

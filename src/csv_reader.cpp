@@ -24,7 +24,7 @@
 #include "csv_reader.h"
 
 namespace csv {
-inline namespace LIB_VERSION {
+inline namespace CSV_LIB_VERSION {
 
 
 csv_reader::csv_reader( const std::string& feedname, core::unique_ptr<csv_device> ptrDevice, core::unique_ptr<csv_events> ptrEvents )

@@ -28,7 +28,7 @@
 #include <map>
 
 namespace csv {
-inline namespace LIB_VERSION {
+inline namespace CSV_LIB_VERSION {
 
 /**
  * @brief Each cvs_field_t can be subject to consistency check and / or manipulations.

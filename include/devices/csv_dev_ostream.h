@@ -29,7 +29,7 @@
 #include <assert.h>
 
 namespace csv {
-inline namespace LIB_VERSION {
+inline namespace CSV_LIB_VERSION {
 
 template<typename char_t>
 class csv_dev_ostream_options : public csv_device_options

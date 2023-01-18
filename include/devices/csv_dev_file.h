@@ -28,7 +28,7 @@
 #include <iostream>
 
 namespace csv {
-inline namespace LIB_VERSION {
+inline namespace CSV_LIB_VERSION {
 
 class csv_dev_file_options : public csv_device_options
 {

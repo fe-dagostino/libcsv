@@ -25,7 +25,7 @@
 #include <cstring>
 
 namespace csv {
-inline namespace LIB_VERSION {
+inline namespace CSV_LIB_VERSION {
 
 csv_parser::csv_parser( const std::string& feedname )
   : csv_parser( feedname, nullptr, nullptr )

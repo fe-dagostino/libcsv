@@ -27,7 +27,7 @@
 #include <fstream>
 
 namespace csv {
-inline namespace LIB_VERSION {
+inline namespace CSV_LIB_VERSION {
 
 #define DeviceOption(p)   (static_cast<const csv_dev_file_options *>(p.get()))
 

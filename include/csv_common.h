@@ -31,7 +31,7 @@
 #include <string>
 
 namespace csv {
-inline namespace LIB_VERSION {
+inline namespace CSV_LIB_VERSION {
 
 typedef uint64_t    csv_uint_t;
 typedef uint8_t     byte;

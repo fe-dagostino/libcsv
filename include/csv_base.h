@@ -33,7 +33,7 @@
 #include <memory>
 
 namespace csv {
-inline namespace LIB_VERSION {
+inline namespace CSV_LIB_VERSION {
 
 
 /**

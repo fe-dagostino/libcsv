@@ -28,7 +28,7 @@
 #include "csv_parser.h"
 
 namespace csv {
-inline namespace LIB_VERSION {
+inline namespace CSV_LIB_VERSION {
 
 /***/
 class csv_reader : public csv_parser

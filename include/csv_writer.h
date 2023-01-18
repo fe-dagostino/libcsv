@@ -27,7 +27,7 @@
 #include "csv_base.h"
 
 namespace csv {
-inline namespace LIB_VERSION {
+inline namespace CSV_LIB_VERSION {
 
 /***/
 class csv_writer : public csv_base

@@ -29,7 +29,7 @@
 #include <unordered_map>
 
 namespace csv {
-inline namespace LIB_VERSION {
+inline namespace CSV_LIB_VERSION {
 
 enum class BreakChain_t : char {
   no  = 0,

@@ -31,7 +31,7 @@
 #include <type_traits>
 
 namespace csv {
-inline namespace LIB_VERSION {
+inline namespace CSV_LIB_VERSION {
 
 template<typename T>
 concept String_t = requires (){

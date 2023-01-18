@@ -26,7 +26,7 @@
 #include <unordered_map>
 
 namespace csv {
-inline namespace LIB_VERSION {
+inline namespace CSV_LIB_VERSION {
 
 // lookup table for presence_t
 static const std::unordered_map<csv_result, std::string> s_mapResults = { 

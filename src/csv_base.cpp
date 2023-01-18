@@ -25,7 +25,7 @@
 #include <cstring>
 
 namespace csv {
-inline namespace LIB_VERSION {
+inline namespace CSV_LIB_VERSION {
 
 csv_base::csv_base( const std::string& feedname )
   : csv_base( feedname, nullptr, nullptr )

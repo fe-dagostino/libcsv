@@ -33,7 +33,7 @@
 #include <functional>
 
 namespace csv {
-inline namespace LIB_VERSION {
+inline namespace CSV_LIB_VERSION {
 
 /**
  * @brief csv_parser support [RFC4180](https://datatracker.ietf.org/doc/rfc4180/)
