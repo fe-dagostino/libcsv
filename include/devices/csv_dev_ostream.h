@@ -66,7 +66,7 @@ public:
    */
   explicit csv_dev_ostream( core::unique_ptr<csv_dev_ostream_options<char_t>> ptrDeviceOptions, core::unique_ptr<csv_device_events> ptrEvents = nullptr)
       : csv_device( "csv_dev_ostream", std::move(ptrDeviceOptions), std::move(ptrEvents) )
-  { assert( csv_device::get_options().get() != nullptr ); }  
+  { assert( csv_device::get_options() != nullptr ); }  
 
   /***/
   virtual ~csv_dev_ostream()
