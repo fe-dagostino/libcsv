@@ -69,11 +69,15 @@ class csv_device
 {
 protected:
   /***/
-  csv_device( const std::string& sDeviceName, core::unique_ptr<csv_device_options> ptrOptions, core::unique_ptr<csv_device_events> ptrEvents = nullptr );
+  csv_device( const std::string& sDeviceName, core::unique_ptr<csv_device_options> ptrOptions, core::unique_ptr<csv_device_events> ptrEvents = nullptr )
+    : m_sDeviceName(sDeviceName), m_ptrOptions( std::move(ptrOptions) ), m_ptrEvents( std::move(ptrEvents) ),
+      m_devStats( { 0, 0, 0 } )
+  {}
 
 public:
   /***/
-  virtual ~csv_device();
+  virtual ~csv_device()
+  {}
 
   /***/
   constexpr const core::unique_ptr<csv_device_options>& get_options() const noexcept
