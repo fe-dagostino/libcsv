@@ -80,15 +80,15 @@ public:
   {}
 
   /***/
-  constexpr const csv_device_options* get_options() const noexcept
+  inline const csv_device_options* get_options() const noexcept
   { return m_ptrOptions.get(); }
 
   /***/
-  virtual const std::string&          get_device_name() const noexcept
+  virtual const std::string&       get_device_name() const noexcept
   { return m_sDeviceName; }
 
   /***/
-  virtual void                        get_stats( csv_dev_stats& stats ) const noexcept
+  virtual void                     get_stats( csv_dev_stats& stats ) const noexcept
   { stats = m_devStats; }
 
 
