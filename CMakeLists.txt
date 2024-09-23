@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.22)
 
 set(libname "csv")
 
@@ -9,31 +9,7 @@ project( ${libname}
          LANGUAGES CXX C
 )
 
-find_package(Git)
-if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
-# Update submodules as needed
-    option(GIT_SUBMODULE "Update submodules with remote" ON)
-    if(GIT_SUBMODULE)
-        message(STATUS "Submodule update")
-        execute_process(COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive --remote -f
-                        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                        RESULT_VARIABLE GIT_SUBMOD_RESULT)
-        if(NOT GIT_SUBMOD_RESULT EQUAL "0")
-            message(FATAL_ERROR "git submodule update --init --recursive --remote -f : failed with ${GIT_SUBMOD_RESULT}, please checkout submodules")
-        endif()
-    endif()
-endif()
-
-if(NOT EXISTS "${PROJECT_SOURCE_DIR}/submodules/lock-free/CMakeLists.txt")
-    message(FATAL_ERROR "The submodules/lock-free were not downloaded! GIT_SUBMODULE was turned off or failed. Please update submodules and try again.")
-endif()
-
-add_subdirectory(submodules/lock-free)
-
-
 configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_DIR}/include/config.h)
-
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/lock-free/include/  )
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include                        )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include/devices                )
@@ -95,6 +71,11 @@ else()
       pthread
   )
 endif()
+
+# Fetch lock-free library and make it available as dependency
+include(FetchContent)
+include(cmake/lock-free.cmake)
+list( APPEND EXT_LIBRARIES lock-free )
 
 option(CSV_BUILD_EXAMPLES "Enable/Disable examples build"  ON)
 option(CSV_BUILD_TESTS    "Enable/Disable tests build"    OFF)

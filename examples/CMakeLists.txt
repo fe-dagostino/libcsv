@@ -20,6 +20,8 @@ endif()
 
 add_executable( csv_rw                                csv_rw.cpp             )
 add_executable( csv_data_vs_string                    csv_data_vs_string.cpp )
+add_executable( csv_stress_memory                     csv_stress_memory.cpp  )
 
 target_link_libraries( csv_rw                         ${DEFAULT_LIBRARIES}   )
 target_link_libraries( csv_data_vs_string             ${DEFAULT_LIBRARIES}   )
+target_link_libraries( csv_stress_memory              ${DEFAULT_LIBRARIES}   )
