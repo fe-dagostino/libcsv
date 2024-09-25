@@ -108,6 +108,13 @@ target_include_directories( ${libname}${LIB_VERSION_A}  INTERFACE
                             "${CMAKE_CURRENT_SOURCE_DIR}/include/devices" 
                           )
 
+include(GNUInstallDirs)
+install( TARGETS ${libname}${LIB_VERSION_SO} ARCHIVE DESTINATION lib )
+install( TARGETS ${libname}${LIB_VERSION_A}  ARCHIVE DESTINATION lib )
+
+install( FILES   ${LIB_INCLUDE} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} ) 
+
+
 if ( CSV_BUILD_EXAMPLES )
   add_subdirectory(examples)
 endif()
