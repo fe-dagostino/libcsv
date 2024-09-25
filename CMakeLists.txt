@@ -14,6 +14,7 @@ configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_SOURCE_D
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include                        )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include/devices                )
 
+set(CMAKE_MODULE_PATH   ${PROJECT_SOURCE_DIR}/cmake )
 
 # uncomment to set a default CXX standard for the external tools like clang-tidy and cppcheck
 # and the targets that do not specify a standard.
@@ -74,7 +75,7 @@ endif()
 
 # Fetch lock-free library and make it available as dependency
 include(FetchContent)
-include(cmake/lock-free.cmake)
+include(lock-free)
 list( APPEND EXT_LIBRARIES lock-free )
 
 option(CSV_BUILD_EXAMPLES "Enable/Disable examples build"  ON)
