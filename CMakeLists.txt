@@ -93,6 +93,8 @@ file( GLOB_RECURSE
 
 add_library   ( ${libname}${LIB_VERSION_SO}   SHARED ${LIB_SRC} )
 add_library   ( ${libname}${LIB_VERSION_A}    STATIC ${LIB_SRC} )
+add_library( libcsv::libcsv        ALIAS ${libname}${LIB_VERSION_SO} )
+add_library( libcsv::libcsv_static ALIAS ${libname}${LIB_VERSION_A}  )
 
 target_link_libraries( ${libname}${LIB_VERSION_SO}  ${EXT_LIBRARIES} )
 target_link_libraries( ${libname}${LIB_VERSION_A}   ${EXT_LIBRARIES} )
