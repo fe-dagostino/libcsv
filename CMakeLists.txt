@@ -16,13 +16,15 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include/devices                
 
 set(CMAKE_MODULE_PATH   ${PROJECT_SOURCE_DIR}/cmake )
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 # uncomment to set a default CXX standard for the external tools like clang-tidy and cppcheck
 # and the targets that do not specify a standard.
 # If not set, the latest supported standard for your compiler is used
 # You can later set fine-grained standards for each target using `target_compile_features`
 # Note: linking together projects compiled with different C++ standards may work, but
 # it is not recommended because of possible issues with ABI
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # strongly encouraged to enable this globally to avoid conflicts between
@@ -95,6 +97,16 @@ add_library   ( ${libname}${LIB_VERSION_SO}   SHARED ${LIB_SRC} )
 add_library   ( ${libname}${LIB_VERSION_A}    STATIC ${LIB_SRC} )
 add_library( libcsv::libcsv        ALIAS ${libname}${LIB_VERSION_SO} )
 add_library( libcsv::libcsv_static ALIAS ${libname}${LIB_VERSION_A}  )
+
+set_target_properties(${libname}${LIB_VERSION_SO} PROPERTIES 
+    INSTALL_RPATH ""
+    SKIP_INSTALL_RPATH TRUE
+    BUILD_WITH_INSTALL_RPATH TRUE
+)
+
+set_target_properties(${libname}${LIB_VERSION_A} PROPERTIES 
+    SKIP_INSTALL_RPATH TRUE
+)
 
 target_link_libraries( ${libname}${LIB_VERSION_SO}  ${EXT_LIBRARIES} )
 target_link_libraries( ${libname}${LIB_VERSION_A}   ${EXT_LIBRARIES} )

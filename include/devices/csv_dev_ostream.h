@@ -89,7 +89,7 @@ public:
   }
 
   /***/
-  virtual csv_result send(const byte* pBuffer, csv_uint_t nBufferLen) noexcept override
+  virtual csv_result send(const byte* pBuffer, size_t nBufferLen) noexcept override
   {
     static_cast<csv_dev_ostream_options<char_t> *>(m_ptrOptions.get())
                         ->ostream().write( reinterpret_cast<const char_t*>(pBuffer), nBufferLen );
@@ -101,7 +101,7 @@ public:
    * \return _rx_error
    * \return _rx_timedout
    */
-  virtual csv_result recv( [[maybe_unused]] byte* pBuffer, [[maybe_unused]] csv_uint_t& nBufferLen) noexcept override
+  virtual csv_result recv( [[maybe_unused]] byte* pBuffer, [[maybe_unused]] size_t& nBufferLen) noexcept override
   { return csv_result::_not_implemented; }
 
   virtual csv_result close() noexcept override

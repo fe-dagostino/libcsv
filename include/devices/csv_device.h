@@ -32,9 +32,9 @@ inline namespace CSV_LIB_VERSION {
 class csv_device;
 
 struct csv_dev_stats {
-  csv_uint_t   rx;
-  csv_uint_t   tx;
-  csv_uint_t   errors;
+  size_t   rx;
+  size_t   tx;
+  size_t   errors;
 };
 
 class csv_device_events
@@ -95,7 +95,7 @@ public:
   /***/
   virtual csv_result open() = 0;
   /***/
-  virtual csv_result send( const byte* pBuffer, csv_uint_t iBufferLen ) = 0;
+  virtual csv_result send( const byte* pBuffer, size_t iBufferLen ) = 0;
   /**
    * @brief Read data from device and copy it into @param pBuffer for a maximum
    *        of @param iBufferLen bytes.
@@ -106,7 +106,7 @@ public:
    *                     case of error this value will be zero.
    * @return csv_result  
    */
-  virtual csv_result recv( byte* pBuffer, csv_uint_t& iBufferLen ) = 0;
+  virtual csv_result recv( byte* pBuffer, size_t& iBufferLen ) = 0;
   /***/
   virtual csv_result close() = 0;
   /***/

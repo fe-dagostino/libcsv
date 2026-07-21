@@ -66,7 +66,7 @@ public:
    *
    * @param sFilename    filename.
    */
-  explicit csv_dev_file_options( std::string sFilename, openmode mode, csv_uint_t buf_size = to_bytes<1>::MBytes, filetype bom = filetype::PLAIN_TEXT ) noexcept
+  explicit csv_dev_file_options( std::string sFilename, openmode mode, size_t buf_size = to_bytes<1>::MBytes, filetype bom = filetype::PLAIN_TEXT ) noexcept
   : csv_device_options(), m_sFilename(sFilename), m_openMode(mode), m_bom(bom),
     m_bufSize( buf_size )
   {}
@@ -84,7 +84,7 @@ public:
   { return m_openMode; }
 
   /***/
-  constexpr csv_uint_t           get_bufsize() const noexcept
+  constexpr size_t               get_bufsize() const noexcept
   { return m_bufSize; }
 
   /***/
@@ -92,10 +92,10 @@ public:
   { return m_bom; }
 
 private:
-  std::string       m_sFilename;
-  const openmode    m_openMode;
-  const filetype    m_bom;
-  const csv_uint_t  m_bufSize;
+  std::string     m_sFilename;
+  const openmode  m_openMode;
+  const filetype  m_bom;
+  const size_t    m_bufSize;
 };
 
 class csv_dev_file : public csv_device
@@ -117,12 +117,12 @@ public:
    * \return _cfg_error     Error appling configuration on specified device.
    */
   virtual csv_result open() noexcept override;
-  virtual csv_result send(const byte* pBuffer, csv_uint_t nBufferLen) noexcept override;
+  virtual csv_result send(const byte* pBuffer, size_t nBufferLen) noexcept override;
   /**
    * \return _rx_error
    * \return _rx_timedout
    */
-  virtual csv_result recv( byte* pBuffer, csv_uint_t& nBufferLen) noexcept override;
+  virtual csv_result recv( byte* pBuffer, size_t& nBufferLen) noexcept override;
   
   virtual csv_result close() noexcept override;
 
@@ -147,13 +147,11 @@ private:
   void                            write_bom() noexcept;
 
 private:
-  FILE*        m_pFile;
-  byte*        m_pRxBuffer;
-  csv_uint_t   m_nCacheSize;
-  csv_uint_t   m_nCursor;
-
+  FILE*   m_pFile;
+  byte*   m_pRxBuffer;
+  size_t  m_nCacheSize;
+  size_t  m_nCursor;
 };
-
 
 } //inline namespace
 } // namespace

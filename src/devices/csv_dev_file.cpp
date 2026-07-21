@@ -231,7 +231,7 @@ csv_result csv_dev_file::open() noexcept
   return _retVal;
 }
 
-csv_result csv_dev_file::send(const byte* pBuffer, csv_uint_t iBufferLen) noexcept
+csv_result csv_dev_file::send(const byte* pBuffer, size_t iBufferLen) noexcept
 {
   // Do not allow call to send() when not in writing mode
   if ( DeviceOption(m_ptrOptions)->get_mode() != csv_dev_file_options::openmode::write )
@@ -241,7 +241,7 @@ csv_result csv_dev_file::send(const byte* pBuffer, csv_uint_t iBufferLen) noexce
   if ( _retVal != csv_result::_ok )
     return _retVal;
 
-  csv_uint_t _wbytes = fwrite((const void*)pBuffer, 1, iBufferLen, m_pFile );
+  size_t _wbytes = fwrite((const void*)pBuffer, 1, iBufferLen, m_pFile );
   // An error occurs writing data.
   if ( _wbytes != iBufferLen )
   {
@@ -268,7 +268,7 @@ csv_result csv_dev_file::send(const byte* pBuffer, csv_uint_t iBufferLen) noexce
   return _retVal;
 }
 
-csv_result csv_dev_file::recv(byte* pBuffer, csv_uint_t& nBufferLen) noexcept
+csv_result csv_dev_file::recv(byte* pBuffer, size_t& nBufferLen) noexcept
 {
   // Do not allow call to recv() when not in reading mode
   if ( DeviceOption(m_ptrOptions)->get_mode() != csv_dev_file_options::openmode::read )
@@ -284,12 +284,12 @@ csv_result csv_dev_file::recv(byte* pBuffer, csv_uint_t& nBufferLen) noexcept
     return _retVal;
   }
 
-  csv_uint_t _nWishedBytes  = nBufferLen;
-  csv_uint_t _nBufCursor    = 0;
+  size_t _nWishedBytes  = nBufferLen;
+  size_t _nBufCursor    = 0;
 
   while ((_nWishedBytes > 0) && (_retVal == csv_result::_ok))
   {
-    const csv_uint_t _nAvailableBytes = m_nCacheSize - m_nCursor;
+    const size_t _nAvailableBytes = m_nCacheSize - m_nCursor;
 
     if ( _nAvailableBytes == 0 )
     {
@@ -412,7 +412,6 @@ constexpr void csv_dev_file::release() noexcept
   m_nCacheSize = 0;
   m_nCursor    = 0;
 }
-
 
 } //inline namespace
 } // namespace

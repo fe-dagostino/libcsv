@@ -33,10 +33,9 @@
 namespace csv {
 inline namespace CSV_LIB_VERSION {
 
-typedef uint64_t    csv_uint_t;
 typedef uint8_t     byte;
 
-template < csv_uint_t qnt = 1 >
+template < size_t qnt = 1 >
 struct to_bytes {
   enum : uint64_t { 
     Bytes  =    1u * qnt,
